@@ -24,7 +24,7 @@ public class MileStone {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "milestone")
+    @OneToMany(mappedBy = "milestone")
     private Task task;
 
     public enum Status {

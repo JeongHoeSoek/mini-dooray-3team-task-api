@@ -26,7 +26,7 @@ public class Project {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private List<ProjectMember> members;
 
     public enum Status {

@@ -25,10 +25,10 @@ public class ProjectMember {
 
     private Role role;
 
-    @OneToMany(mappedBy = "projectMember", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "projectMember", cascade = CascadeType.REMOVE)
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "projectMember", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "projectMember", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
     public enum Role {

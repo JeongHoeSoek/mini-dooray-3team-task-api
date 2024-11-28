@@ -23,7 +23,7 @@ public class Task {
     @ManyToOne
     private Project project;
 
-    @OneToOne
+    @ManyToOne
     private MileStone milestone;
 
     @ManyToOne
@@ -36,10 +36,10 @@ public class Task {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE)
     private List<TaskTag> taskTags;
 
 }

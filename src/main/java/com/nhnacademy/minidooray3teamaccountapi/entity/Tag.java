@@ -21,7 +21,7 @@ public class Tag {
 
     private String name;
 
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.REMOVE)
     private List<TaskTag> taskTags;
 
 }
