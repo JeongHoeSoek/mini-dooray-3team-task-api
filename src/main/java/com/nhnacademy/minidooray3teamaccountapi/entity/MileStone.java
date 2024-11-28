@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,7 +26,7 @@ public class MileStone {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "milestone")
-    private Task task;
+    private List<Task> tasks;
 
     public enum Status {
         START, PROGRESS, END
