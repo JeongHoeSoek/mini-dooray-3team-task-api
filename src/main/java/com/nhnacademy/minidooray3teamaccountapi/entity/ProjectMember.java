@@ -20,7 +20,8 @@ public class ProjectMember {
     @ManyToOne
     private Project project;
 
-    private Long userId;
+    @ManyToOne
+    private User user;
 
     private Role role;
 
