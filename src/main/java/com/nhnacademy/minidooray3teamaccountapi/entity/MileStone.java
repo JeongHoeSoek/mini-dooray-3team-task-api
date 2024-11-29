@@ -37,4 +37,16 @@ public class MileStone {
     public enum Status {
         START, PROGRESS, END
     }
+
+    public void patch(MileStone mileStone) {
+        // 전달 값에 name 속성의 값이 있다면 넣기
+        if (mileStone.name != null) {
+            this.setName(mileStone.getName());
+        }
+
+        // 전달 값에 status 속성의 값 있다면 넣기
+        if (mileStone.status != null) {
+            this.setStatus(mileStone.getStatus());
+        }
+    }
 }
