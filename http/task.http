@@ -1,0 +1,9 @@
+POST http://localhost:8080/projects/1/tasks
+Content-Type: application/json
+
+{
+  "projectMemberId": 2,
+  "title": "API 개발",
+  "description": "Task-API 구현 작업",
+  "milestoneId": 1
+}
