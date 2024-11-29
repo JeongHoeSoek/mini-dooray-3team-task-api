@@ -29,6 +29,9 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private List<ProjectMember> members;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
+    private List<Task> tasks;
+
     public enum Status {
         ACTIVE, SLEEP, CLOSED
     }
