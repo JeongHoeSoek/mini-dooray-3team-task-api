@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,19 @@ public class MileStoneController {
 
     @Autowired
     private MileStoneService mileStoneService;
+
+    // 마일스톤 조회
+    // 마일스톤 전체 조회
+    @GetMapping
+    public Iterable<MileStoneResponseDTO> show() {
+        return mileStoneService.show();
+    }
+
+    // 마일스톤 아이디로 조회
+    @GetMapping("/{milestoneId}")
+    public MileStoneResponseDTO index(@PathVariable Long milestoneId) {
+        return mileStoneService.index(milestoneId);
+    }
 
     // 마일스톤 생성
     @PostMapping
@@ -36,7 +50,7 @@ public class MileStoneController {
     }
 
     // 마일스톤 업데이트
-    @PatchMapping("/{milestonteId")
+    @PatchMapping("/{milestoneId")
     public ResponseEntity<MileStoneResponseDTO> updateMileStone(@PathVariable Long projectId,
                                                                 @PathVariable Long milestoneId,
                                                                 @RequestBody MileStoneRequestDTO requestDTO) {
@@ -50,10 +64,10 @@ public class MileStoneController {
     }
 
     // 마일스톤 삭제
-    @DeleteMapping("{milesoneId}")
+    @DeleteMapping("{milestoneId}")
     public ResponseEntity<MileStoneResponseDTO> deleteMileStone(@PathVariable Long projectId,
-                                                                @PathVariable Long milesoneId) {
-        MileStoneResponseDTO deleted = mileStoneService.deleteMileStone(projectId, milesoneId);
+                                                                @PathVariable Long milestoneId) {
+        MileStoneResponseDTO deleted = mileStoneService.deleteMileStone(projectId, milestoneId);
 
         if (deleted == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

@@ -6,6 +6,8 @@ import com.nhnacademy.minidooray3teamaccountapi.entity.MileStone;
 import com.nhnacademy.minidooray3teamaccountapi.repository.MilestoneRepository;
 import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,13 +88,13 @@ public class MileStoneService {
         return toResponseDTO(updated);
     }
 
-    public MileStoneResponseDTO deleteMileStone(Long projectId, Long milesoneId) {
+    public MileStoneResponseDTO deleteMileStone(Long projectId, Long milestoneId) {
         // 프로젝트 조회 (필요 시)
         // Project project = projectRepository.findById(projectId)
         //         .orElseThrow(() -> new ResourceNotFoundException("프로젝트를 찾을 수 없습니다."));
 
         // MileStone 조회
-        MileStone target = milestoneRepository.findById(milesoneId).orElse(null);
+        MileStone target = milestoneRepository.findById(milestoneId).orElse(null);
 
         if (target == null) {
             return null;
@@ -102,5 +104,23 @@ public class MileStoneService {
         milestoneRepository.delete(target);
 
         return toResponseDTO(target);
+    }
+
+    // 전체 조회
+    public Iterable<MileStoneResponseDTO> show() {
+        // 마일 스톤 조회해서 담기
+        Iterable<MileStone> mileStones = milestoneRepository.findAll();
+
+        // 마일스톤 DTO로 변환
+        List<MileStoneResponseDTO> dtoList = new ArrayList<>();
+        for (MileStone mileStone : mileStones) {
+            dtoList.add(toResponseDTO(mileStone));
+        }
+
+        return dtoList;
+    }
+
+    public MileStoneResponseDTO index(Long milestoneId) {
+        return toResponseDTO(milestoneRepository.findById(milestoneId).orElse(null));
     }
 }
