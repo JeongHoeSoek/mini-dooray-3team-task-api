@@ -9,13 +9,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class User {
 
     @Id
-    private String id;
+    private String userId;
 
     private String username;
 

@@ -22,7 +22,7 @@ public class MileStone {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long milestoneId;
 
     private String name;
 
