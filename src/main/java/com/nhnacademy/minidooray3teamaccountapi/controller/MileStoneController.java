@@ -51,7 +51,14 @@ public class MileStoneController {
 
     // 마일스톤 삭제
     @DeleteMapping("{milesoneId}")
-    public ResponseEntity<MileStoneResponseDTO> deleteMileStone() {
+    public ResponseEntity<MileStoneResponseDTO> deleteMileStone(@PathVariable Long projectId,
+                                                                @PathVariable Long milesoneId) {
+        MileStoneResponseDTO deleted = mileStoneService.deleteMileStone(projectId, milesoneId);
 
+        if (deleted == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

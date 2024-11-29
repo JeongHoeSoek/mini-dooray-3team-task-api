@@ -35,8 +35,8 @@ public class MileStoneService {
     // Entity -> DTO 변환
     public MileStoneResponseDTO toResponseDTO(MileStone mileStone) {
         MileStoneResponseDTO responseDTO = new MileStoneResponseDTO();
-        
-        responseDTO.setId(mileStone.getId());
+
+        responseDTO.setId(mileStone.getMilestoneId());
         responseDTO.setName(mileStone.getName());
         responseDTO.setStatus(mileStone.getStatus().name());
 
@@ -75,7 +75,7 @@ public class MileStoneService {
         // MileStone 조회
         MileStone target = milestoneRepository.findById(milestoneId).orElse(null);
 
-        if (target == null || target.getId() != milestoneId) {
+        if (target == null || target.getMilestoneId() != milestoneId) {
             return null;
         }
 
@@ -84,5 +84,23 @@ public class MileStoneService {
         MileStone updated = milestoneRepository.save(target);
 
         return toResponseDTO(updated);
+    }
+
+    public MileStoneResponseDTO deleteMileStone(Long projectId, Long milesoneId) {
+        // 프로젝트 조회 (필요 시)
+        // Project project = projectRepository.findById(projectId)
+        //         .orElseThrow(() -> new ResourceNotFoundException("프로젝트를 찾을 수 없습니다."));
+
+        // MileStone 조회
+        MileStone target = milestoneRepository.findById(milesoneId).orElse(null);
+
+        if (target == null) {
+            return null;
+        }
+
+        // 삭제
+        milestoneRepository.delete(target);
+
+        return toResponseDTO(target);
     }
 }
