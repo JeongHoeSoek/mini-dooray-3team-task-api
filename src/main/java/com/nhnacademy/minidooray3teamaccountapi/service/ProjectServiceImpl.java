@@ -35,7 +35,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectMember creator = new ProjectMember(null, project, user, ProjectMember.Role.ADMIN, null, null);
         projectMemberRepository.save(creator);
 
-        return new ProjectDTO(project.getId(), project.getName(), project.getStatus().name(), project.getCreatedAt());
+        return new ProjectDTO(project.getProjectId(), project.getName(), project.getStatus().name(), project.getCreatedAt());
     }
 
     @Override
@@ -46,23 +46,23 @@ public class ProjectServiceImpl implements ProjectService {
 
         // 검증: 사용자가 프로젝트 멤버인지 확인
         boolean isMember = project.getMembers().stream()
-                .anyMatch(member -> member.getUser().getId().equals(userId));
+                .anyMatch(member -> member.getUser().getUserId().equals(userId));
         if (!isMember) {
             throw new UnauthorizedAccessException("User is not a member of the project");
         }
 
         List<ProjectMemberDTO> members = project.getMembers().stream()
-                .map(member -> new ProjectMemberDTO(project.getId(), member.getUser().getId(), member.getRole().name()))
+                .map(member -> new ProjectMemberDTO(project.getProjectId(), member.getUser().getUserId(), member.getRole().name()))
                 .collect(Collectors.toList());
 
         List<TaskSummaryDTO> tasks = project.getTasks().stream()
-                .map(task -> new TaskSummaryDTO(task.getId(), task.getTitle()))
+                .map(task -> new TaskSummaryDTO(task.getTaskId(), task.getTitle()))
                 .collect(Collectors.toList());
 
         List<MilestoneSummaryDTO> milestones = project.getTasks().stream()
                 .filter(task -> task.getMilestone() != null)
                 .map(task -> new MilestoneSummaryDTO(
-                        task.getMilestone().getId(),
+                        task.getMilestone().getMilestoneId(),
                         task.getMilestone().getName(),
                         task.getMilestone().getStatus().name()))
                 .distinct()
@@ -70,12 +70,12 @@ public class ProjectServiceImpl implements ProjectService {
 
         List<TagSummaryDTO> tags = project.getTasks().stream()
                 .flatMap(task -> task.getTaskTags().stream())
-                .map(taskTag -> new TagSummaryDTO(taskTag.getTag().getId(), taskTag.getTag().getName()))
+                .map(taskTag -> new TagSummaryDTO(taskTag.getTag().getTagId(), taskTag.getTag().getName()))
                 .distinct()
                 .collect(Collectors.toList());
 
         return new ProjectDetailsDTO(
-                project.getId(),
+                project.getProjectId(),
                 project.getName(),
                 project.getStatus().name(),
                 project.getCreatedAt(),
@@ -93,7 +93,7 @@ public class ProjectServiceImpl implements ProjectService {
         return user.getProjectMembers().stream()
                 .map(member -> {
                     Project project = member.getProject();
-                    return new UserProjectDTO(project.getId(), project.getName(), project.getStatus().name());
+                    return new UserProjectDTO(project.getProjectId(), project.getName(), project.getStatus().name());
                 })
                 .collect(Collectors.toList());
     }
@@ -105,7 +105,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         // 검증: 사용자가 ADMIN인지 확인
         boolean isAdmin = project.getMembers().stream()
-                .anyMatch(member -> member.getUser().getId().equals(userId) && member.getRole() == ProjectMember.Role.ADMIN);
+                .anyMatch(member -> member.getUser().getUserId().equals(userId) && member.getRole() == ProjectMember.Role.ADMIN);
         if (!isAdmin) {
             throw new UnauthorizedAccessException("User is not authorized to delete the project");
         }
