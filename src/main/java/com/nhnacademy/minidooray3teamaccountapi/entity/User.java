@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Table(name = "users")
 public class User {
 
     @Id
