@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ProjectMemberRequestDTO {
+public class ProjectMemberSummaryDTO {
     private String userId;
     private String role;
 }

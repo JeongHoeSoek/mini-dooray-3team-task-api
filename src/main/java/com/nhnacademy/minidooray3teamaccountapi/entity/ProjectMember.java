@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "project_members")
 public class ProjectMember {
 
     @Id
@@ -23,6 +24,7 @@ public class ProjectMember {
     @ManyToOne
     private User user;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "projectMember", cascade = CascadeType.REMOVE)

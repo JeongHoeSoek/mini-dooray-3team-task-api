@@ -10,5 +10,5 @@ import lombok.Getter;
 public class UserProjectDTO {
     private Long projectId;
     private String name;
-    private Status status;
+    private String status;
 }
