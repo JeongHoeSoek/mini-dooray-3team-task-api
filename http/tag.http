@@ -1,0 +1,10 @@
+### 태그 생성
+POST http://localhost:8082/projects/1/tags
+Content-Type: application/json
+
+{
+  "name": "Backend"
+}
+
+### 태그 삭제
+DELETE http://localhost:8082/projects/1/tags/1
