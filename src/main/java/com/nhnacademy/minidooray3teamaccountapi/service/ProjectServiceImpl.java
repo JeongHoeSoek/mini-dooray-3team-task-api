@@ -26,37 +26,115 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public ProjectDTO createProject(String userId, ProjectCreateRequestDTO requestDTO) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        // 사용자 확인 및 프로젝트 생성
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        Project project = new Project(null, requestDTO.getName(), Project.Status.valueOf(requestDTO.getStatus()), LocalDateTime.now(), null, null);
+        Project project = new Project(null, requestDTO.getName(),
+                Project.Status.valueOf(requestDTO.getStatus()),
+                LocalDateTime.now(), null, null);
         project = projectRepository.save(project);
 
-        // 프로젝트 생성자 추가
-        ProjectMember creator = new ProjectMember(null, project, user, ProjectMember.Role.ADMIN, null, null);
+        // ADMIN 권한으로 생성자 추가
+        ProjectMember creator = new ProjectMember(null, project, user,
+                ProjectMember.Role.ADMIN, null, null);
         projectMemberRepository.save(creator);
 
-        return new ProjectDTO(project.getProjectId(), project.getName(), project.getStatus().name(), project.getCreatedAt());
+        return new ProjectDTO(project.getProjectId(), project.getName(),
+                project.getStatus().name(), project.getCreatedAt());
     }
 
     @Override
     @Transactional(readOnly = true)
     public ProjectDetailsDTO getProjectDetails(String userId, Long projectId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project not found"));
+        // 사용자 및 프로젝트 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project not found: ID=" + projectId));
 
-        // 검증: 사용자가 프로젝트 멤버인지 확인
+        // 사용자 권한 확인
         boolean isMember = project.getMembers().stream()
                 .anyMatch(member -> member.getUser().getUserId().equals(userId));
         if (!isMember) {
             throw new UnauthorizedAccessException("User is not a member of the project");
         }
 
+        return createProjectDetailsDTO(project);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserProjectDTO> getUserProjects(String userId) {
+        // 사용자 확인 및 프로젝트 목록 반환
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+        return projectRepository.findByMembers_User_UserId(userId).stream()
+                .map(project -> new UserProjectDTO(project.getProjectId(),
+                        project.getName(), project.getStatus().name()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void deleteProject(String userId, Long projectId) {
+        // 프로젝트 확인 및 ADMIN 권한 검증
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project not found: ID=" + projectId));
+
+        boolean isAdmin = project.getMembers().stream()
+                .anyMatch(member -> member.getUser().getUserId().equals(userId) &&
+                        member.getRole() == ProjectMember.Role.ADMIN);
+        if (!isAdmin) {
+            throw new UnauthorizedAccessException("User is not authorized to delete the project");
+        }
+
+        projectRepository.deleteById(projectId);
+    }
+
+    @Override
+    @Transactional
+    public ProjectMemberDTO addMemberToProject(String userId, Long projectId, ProjectMemberSummaryDTO memberDTO) {
+        // 프로젝트 및 사용자 확인
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project not found: ID=" + projectId));
+        User user = userRepository.findById(memberDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + memberDTO.getUserId()));
+
+        // 중복 멤버 확인
+        if (projectMemberRepository.existsByProject_ProjectIdAndUser_UserId(projectId, memberDTO.getUserId())) {
+            throw new MemberAlreadyExistsException("Member already exists in the project");
+        }
+
+        // 멤버 추가
+        ProjectMember member = new ProjectMember(null, project, user,
+                ProjectMember.Role.valueOf(memberDTO.getRole()), null, null);
+        projectMemberRepository.save(member);
+
+        return new ProjectMemberDTO(projectId, memberDTO.getUserId(), memberDTO.getRole());
+    }
+
+
+    @Override
+    @Transactional
+    public void removeMemberFromProject(String userId, Long projectId, String memberUserId) {
+        // 프로젝트 멤버 확인
+        ProjectMember member = projectMemberRepository
+                .findByProject_ProjectIdAndUser_UserId(projectId, memberUserId)
+                .orElseThrow(() -> new MemberNotFoundException("Member not found in the project"));
+
+        // 멤버 삭제
+        projectMemberRepository.delete(member);
+    }
+
+    /**
+     * 프로젝트의 상세 정보를 반환하는 내부 메서드
+     */
+    private ProjectDetailsDTO createProjectDetailsDTO(Project project) {
         List<ProjectMemberSummaryDTO> members = project.getMembers().stream()
-                .map(member -> new ProjectMemberSummaryDTO(
-                        member.getUser().getUserId(),
+                .map(member -> new ProjectMemberSummaryDTO(member.getUser().getUserId(),
                         member.getRole().name()))
                 .collect(Collectors.toList());
-
 
         List<TaskSummaryDTO> tasks = project.getTasks().stream()
                 .map(task -> new TaskSummaryDTO(task.getTaskId(), task.getTitle()))
@@ -73,71 +151,18 @@ public class ProjectServiceImpl implements ProjectService {
 
         List<TagSummaryDTO> tags = project.getTasks().stream()
                 .flatMap(task -> task.getTaskTags().stream())
-                .map(taskTag -> new TagSummaryDTO(taskTag.getTag().getTagId(), taskTag.getTag().getName()))
+                .map(taskTag -> new TagSummaryDTO(taskTag.getTag().getTagId(),
+                        taskTag.getTag().getName()))
                 .distinct()
                 .collect(Collectors.toList());
 
-        return new ProjectDetailsDTO(
-                project.getProjectId(),
+        return new ProjectDetailsDTO(project.getProjectId(),
                 project.getName(),
                 project.getStatus().name(),
                 project.getCreatedAt(),
                 members,
                 tasks,
                 milestones,
-                tags
-        );
+                tags);
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<UserProjectDTO> getUserProjects(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        return projectRepository.findByMembers_User_UserId(userId).stream()
-                .map(project -> new UserProjectDTO(project.getProjectId(), project.getName(), project.getStatus().name()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional
-    public void deleteProject(String userId, Long projectId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project not found"));
-
-        // 검증: 사용자가 ADMIN인지 확인
-        boolean isAdmin = project.getMembers().stream()
-                .anyMatch(member -> member.getUser().getUserId().equals(userId) && member.getRole() == ProjectMember.Role.ADMIN);
-        if (!isAdmin) {
-            throw new UnauthorizedAccessException("User is not authorized to delete the project");
-        }
-
-        projectRepository.deleteById(projectId);
-    }
-
-    @Override
-    @Transactional
-    public ProjectMemberDTO addMemberToProject(String userId, Long projectId, ProjectMemberSummaryDTO memberDTO) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project not found"));
-        User user = userRepository.findById(memberDTO.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        // 변경된 메서드 이름 사용
-        if (projectMemberRepository.existsByProject_ProjectIdAndUser_UserId(projectId, memberDTO.getUserId())) {
-            throw new MemberAlreadyExistsException("Member already exists in the project");
-        }
-
-        ProjectMember member = new ProjectMember(null, project, user, ProjectMember.Role.valueOf(memberDTO.getRole()), null, null);
-        projectMemberRepository.save(member);
-
-        return new ProjectMemberDTO(projectId, memberDTO.getUserId(), memberDTO.getRole());
-    }
-
-    @Override
-    @Transactional
-    public void removeMemberFromProject(String userId, Long projectId, String memberUserId) {
-        // 변경된 메서드 이름 사용
-        ProjectMember member = projectMemberRepository.findByProject_ProjectIdAndUser_UserId(projectId, memberUserId)
-                .orElseThrow(() -> new MemberNotFoundException("Member not found in the project"));
-
-        projectMemberRepository.delete(member);
-    }
-
 }
