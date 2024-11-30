@@ -21,12 +21,12 @@ public class CommentController {
 
     // 댓글 생성
     @PostMapping
-    public ResponseEntity<CommentDTO> createComment(@RequestBody CommentCreateDTO commentCreateDTO) {
+    public ResponseEntity<Comment2DTO> createComment(@RequestBody CommentCreateDTO commentCreateDTO) {
         // Task 객체를 직접 생성하거나 서비스에서 조회하여 전달
         Task task = new Task(); // 실제로는 TaskService 등을 통해 Task 조회 로직이 필요
 
 
-        CommentDTO commentDTO = commentService.createComment(
+        Comment2DTO commentDTO = commentService.createComment(
                 task,
                 commentCreateDTO.getProjectMemberId(),
                 commentCreateDTO.getContent()
@@ -36,8 +36,8 @@ public class CommentController {
 
     // 특정 태스크의 댓글 조회
     @GetMapping("/task/{taskId}")
-    public ResponseEntity<List<CommentDTO>> getCommentsByTaskId(@PathVariable long taskId) {
-        List<CommentDTO> comments = commentService.getCommentsByTaskId(taskId);
+    public ResponseEntity<List<Comment2DTO>> getCommentsByTaskId(@PathVariable long taskId) {
+        List<Comment2DTO> comments = commentService.getCommentsByTaskId(taskId);
         return ResponseEntity.ok(comments);
     }
 

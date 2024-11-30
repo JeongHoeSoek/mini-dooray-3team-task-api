@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long projectId;
 
     private String name;
 

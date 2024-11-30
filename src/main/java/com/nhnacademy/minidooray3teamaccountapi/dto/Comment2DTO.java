@@ -8,9 +8,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CommentCreateResponseDTO {
-    private long commentId;
-    private long taskId;
+public class Comment2DTO {
+    private Long commentId;
     private List<ProjectMemberSummaryDTO> projectMember;
     private String content;
     private LocalDateTime createdAt;

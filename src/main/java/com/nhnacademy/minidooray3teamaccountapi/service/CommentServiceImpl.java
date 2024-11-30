@@ -23,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO createComment(Task taskId, long projectMemberId, String content) {
+    public Comment2DTO createComment(Task taskId, long projectMemberId, String content) {
         // 프로젝트 멤버 조회
         ProjectMember projectMember = projectMemberRepository.findById(projectMemberId)
                 .orElseThrow(() -> new IllegalArgumentException("Project member not found"));
@@ -39,10 +39,10 @@ public class CommentServiceImpl implements CommentService {
         Comment savedComment = commentRepository.save(comment);
 
         // CommentDTO로 변환하여 반환
-        return new CommentDTO(
-                savedComment.getId(),
-                List.of(new ProjectMemberDTO(
-                        savedComment.getProjectMember().getUser().getId(),
+        return new Comment2DTO(
+                savedComment.getCommentId(),
+                List.of(new ProjectMemberSummaryDTO(
+                        savedComment.getProjectMember().getUser().getUserId(),
                         savedComment.getProjectMember().getRole().name()
                 )),
                 savedComment.getContent(),
@@ -51,15 +51,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> getCommentsByTaskId(long taskId) {
+    public List<Comment2DTO> getCommentsByTaskId(long taskId) {
         // 특정 태스크의 댓글 조회
         List<Comment> comments = commentRepository.findByTaskId(taskId);
 
         // CommentDTO로 변환
-        return comments.stream().map(comment -> new CommentDTO(
-                comment.getId(),
-                List.of(new ProjectMemberDTO(
-                        comment.getProjectMember().getUser().getId(),
+        return comments.stream().map(comment -> new Comment2DTO(
+                comment.getCommentId(),
+                List.of(new ProjectMemberSummaryDTO(
+                        comment.getProjectMember().getUser().getUserId(),
                         comment.getProjectMember().getRole().name()
                 )),
                 comment.getContent(),
@@ -82,10 +82,10 @@ public class CommentServiceImpl implements CommentService {
 
         // CommentUpdateResponseDTO로 변환하여 반환
         return new CommentUpdateResponseDTO(
-                updatedComment.getId(),
-                updatedComment.getTask().getId(),
-                List.of(new ProjectMemberDTO(
-                        updatedComment.getProjectMember().getUser().getId(),
+                updatedComment.getCommentId(),
+                updatedComment.getTask().getTaskId(),
+                List.of(new ProjectMemberSummaryDTO(
+                        updatedComment.getProjectMember().getUser().getUserId(),
                         updatedComment.getProjectMember().getRole().name()
                 )),
                 updatedComment.getContent(),
