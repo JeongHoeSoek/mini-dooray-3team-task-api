@@ -60,7 +60,7 @@ X-User-Id: admin-user
 DELETE http://localhost:8082/projects/2
 X-User-Id: admin-user
 
-###
+### 마일스톤 생성
 POST http://localhost:8082/projects/2/milestones
 Content-Type: application/json
 X-User-Id: admin-user
@@ -70,15 +70,37 @@ X-User-Id: admin-user
   "status": "START"
 }
 
-###
+### Task 생성
 POST http://localhost:8082/projects/2/tasks
 Content-Type: application/json
 X-User-Id: admin-user
 
 {
-  "projectMemberId": 2,
+  "projectMemberId": 1,
   "title": "API 개발",
   "description": "Task-API 구현 작업",
   "milestoneId": 1
 }
 
+### Task 조회
+GET http://localhost:8082/projects/2/tasks/1
+
+### 특정 멤버가 작성한 테스크 조회
+GET http://localhost:8082/projects/2/members/1/tasks
+
+### Task 수정
+PUT http://localhost:8082/projects/2/tasks/1
+Content-Type: application/json
+X-User-Id: admin-user
+
+{
+  "title": "Updated Task Title",
+  "description": "Updated description",
+  "milestoneId": 1
+}
+
+### 수정된 Task 조회
+GET http://localhost:8082/projects/2/tasks/1
+
+### Task 삭제
+DELETE http://localhost:8082/projects/2/tasks/1

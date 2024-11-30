@@ -30,13 +30,13 @@ public class TaskService {
 
     @Transactional
     public TaskResponse createTask(Long projectId, TaskRequest taskRequest) {
-        Project project = projectRepository.findById(projectId)
+        Project project = projectRepository.findById(projectId) // 프로젝트 존재 확인
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
-        ProjectMember projectMember = projectMemberRepository.findById(taskRequest.getProjectMemberId())
+        ProjectMember projectMember = projectMemberRepository.findById(taskRequest.getProjectMemberId()) // 프로젝트 멤버 확인
                 .orElseThrow(() -> new ResourceNotFoundException("ProjectMember not found"));
 
-        MileStone milestone = null;
+        MileStone milestone = null; // 마일스톤 존재 확인
         if (taskRequest.getMilestoneId() != null) {
             milestone = milestoneRepository.findById(taskRequest.getMilestoneId())
                     .orElseThrow(() -> new ResourceNotFoundException("Milestone not found"));
