@@ -50,7 +50,7 @@ public class MileStoneController {
     }
 
     // 마일스톤 업데이트
-    @PatchMapping("/{milestoneId")
+    @PatchMapping("/{milestoneId}")
     public ResponseEntity<MileStoneResponseDTO> updateMileStone(@PathVariable Long projectId,
                                                                 @PathVariable Long milestoneId,
                                                                 @RequestBody MileStoneRequestDTO requestDTO) {
