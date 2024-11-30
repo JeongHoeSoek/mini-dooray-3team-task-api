@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
-//    List<Tag> findByProject_Id(Long projectId); // 수정: projectId 대신 project 필드를 참조
+//    List<Tag> findByProjectId(Long projectId);
 }
