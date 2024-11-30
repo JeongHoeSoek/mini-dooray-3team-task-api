@@ -44,11 +44,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 일반적인 예외 처리
+     * 권한이 없는 경우
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDTO> handleGeneralException(Exception ex) {
-        return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred: " + ex.getMessage());
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ErrorDTO> handleUnauthorizedAccess(UnauthorizedAccessException ex) {
+        return errorResponse(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
     /**
