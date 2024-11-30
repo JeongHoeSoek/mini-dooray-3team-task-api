@@ -1,15 +1,25 @@
 package com.nhnacademy.minidooray3teamaccountapi.service;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.*;
-import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.CommentDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDTO;
-import com.nhnacademy.minidooray3teamaccountapi.entity.*;
+import com.nhnacademy.minidooray3teamaccountapi.dto.TagResponseDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.TaskRequest;
+import com.nhnacademy.minidooray3teamaccountapi.dto.TaskResponse;
+import com.nhnacademy.minidooray3teamaccountapi.entity.MileStone;
+import com.nhnacademy.minidooray3teamaccountapi.entity.Project;
+import com.nhnacademy.minidooray3teamaccountapi.entity.ProjectMember;
+import com.nhnacademy.minidooray3teamaccountapi.entity.Task;
 import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundException;
-import com.nhnacademy.minidooray3teamaccountapi.repository.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.nhnacademy.minidooray3teamaccountapi.repository.MilestoneRepository;
+import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectMemberRepository;
+import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectRepository;
+import com.nhnacademy.minidooray3teamaccountapi.repository.TaskRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 public class TaskService {
 
@@ -118,16 +128,16 @@ public class TaskService {
         response.setCreatedAt(task.getCreatedAt());
 
         if (task.getMilestone() != null) {
-            MileStoneDTO milestoneDto = new MileStoneDTO();
-            milestoneDto.setMilestoneId(task.getMilestone().getMilestoneId());
+            MileStoneResponseDTO milestoneDto = new MileStoneResponseDTO();
+            milestoneDto.setId(task.getMilestone().getMilestoneId());
             milestoneDto.setName(task.getMilestone().getName());
             milestoneDto.setStatus(task.getMilestone().getStatus().name());
             response.setMileStoneDto(milestoneDto); // 메서드 이름 수정
         }
 
         if (task.getTaskTags() != null) {
-            List<TagDTO> tags = task.getTaskTags().stream().map(taskTag -> {
-                TagDTO tagDto = new TagDTO();
+            List<TagResponseDTO> tags = task.getTaskTags().stream().map(taskTag -> {
+                TagResponseDTO tagDto = new TagResponseDTO();
                 tagDto.setTagId(taskTag.getTag().getTagId());
                 tagDto.setName(taskTag.getTag().getName());
                 return tagDto;
@@ -136,8 +146,8 @@ public class TaskService {
         }
 
         if (task.getComments() != null) {
-            List<CommentDto> comments = task.getComments().stream().map(comment -> {
-                CommentDto commentDto = new CommentDto();
+            List<CommentDTO> comments = task.getComments().stream().map(comment -> {
+                CommentDTO commentDto = new CommentDTO();
                 commentDto.setCommentId(comment.getCommentId());
                 commentDto.setContent(comment.getContent());
                 commentDto.setCreatedAt(comment.getCreatedAt());
