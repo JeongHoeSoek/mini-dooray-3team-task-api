@@ -1,11 +1,10 @@
 package com.nhnacademy.minidooray3teamaccountapi.dto;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDTO;
-import lombok.Data;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
-public class CommentDto {
+public class CommentDTO {
     private Long commentId;
     private ProjectMemberDTO projectMember;
     private String content;

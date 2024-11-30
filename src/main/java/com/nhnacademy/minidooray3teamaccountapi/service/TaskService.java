@@ -1,6 +1,6 @@
 package com.nhnacademy.minidooray3teamaccountapi.service;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.CommentDto;
+import com.nhnacademy.minidooray3teamaccountapi.dto.CommentDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.TagResponseDTO;
@@ -146,8 +146,8 @@ public class TaskService {
         }
 
         if (task.getComments() != null) {
-            List<CommentDto> comments = task.getComments().stream().map(comment -> {
-                CommentDto commentDto = new CommentDto();
+            List<CommentDTO> comments = task.getComments().stream().map(comment -> {
+                CommentDTO commentDto = new CommentDTO();
                 commentDto.setCommentId(comment.getCommentId());
                 commentDto.setContent(comment.getContent());
                 commentDto.setCreatedAt(comment.getCreatedAt());

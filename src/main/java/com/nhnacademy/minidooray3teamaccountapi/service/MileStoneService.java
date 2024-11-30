@@ -48,8 +48,7 @@ public class MileStoneService {
     // MileStone 생성
     public MileStoneResponseDTO createMileStone(Long projectId, MileStoneRequestDTO requestDTO) {
         // 프로젝트 조회 (필요 시)
-        // Project project = projectRepository.findById(projectId)
-        //         .orElseThrow(() -> new ResourceNotFoundException("프로젝트를 찾을 수 없습니다."));
+        // Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("프로젝트를 찾을 수 없습니다."));
 
         // DTO -> Entity로 변환
         MileStone entity = toEntity(requestDTO);
