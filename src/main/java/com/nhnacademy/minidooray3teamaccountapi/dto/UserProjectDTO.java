@@ -1,4 +1,4 @@
-package com.nhnacademy.minidooray3teamaccountapi.dto.project;
+package com.nhnacademy.minidooray3teamaccountapi.dto;
 
 import com.nhnacademy.minidooray3teamaccountapi.entity.Project.Status;
 import lombok.AllArgsConstructor;

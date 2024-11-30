@@ -1,7 +1,7 @@
 package com.nhnacademy.minidooray3teamaccountapi.controller;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.milestone.MileStoneRequestDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.milestone.MileStoneResponseDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneRequestDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.service.MileStoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

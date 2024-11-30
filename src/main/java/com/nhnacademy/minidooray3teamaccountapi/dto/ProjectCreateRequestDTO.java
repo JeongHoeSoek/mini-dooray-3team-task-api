@@ -1,12 +1,11 @@
-package com.nhnacademy.minidooray3teamaccountapi.dto.milestone;
+package com.nhnacademy.minidooray3teamaccountapi.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class MilestoneSummaryDTO {
-    private Long id;
+public class ProjectCreateRequestDTO {
     private String name;
     private String status;
 }

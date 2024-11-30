@@ -1,22 +1,10 @@
 package com.nhnacademy.minidooray3teamaccountapi.service;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.TagSummaryDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.milestone.MilestoneSummaryDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectCreateRequestDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectDetailsDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectMemberDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectMemberSummaryDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.TaskSummaryDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.UserProjectDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.*;
 import com.nhnacademy.minidooray3teamaccountapi.entity.Project;
 import com.nhnacademy.minidooray3teamaccountapi.entity.ProjectMember;
 import com.nhnacademy.minidooray3teamaccountapi.entity.User;
-import com.nhnacademy.minidooray3teamaccountapi.exception.MemberAlreadyExistsException;
-import com.nhnacademy.minidooray3teamaccountapi.exception.MemberNotFoundException;
-import com.nhnacademy.minidooray3teamaccountapi.exception.ProjectNotFoundException;
-import com.nhnacademy.minidooray3teamaccountapi.exception.UnauthorizedAccessException;
-import com.nhnacademy.minidooray3teamaccountapi.exception.UserNotFoundException;
+import com.nhnacademy.minidooray3teamaccountapi.exception.*;
 import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectMemberRepository;
 import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectRepository;
 import com.nhnacademy.minidooray3teamaccountapi.repository.UserRepository;
@@ -63,9 +51,12 @@ public class ProjectServiceImpl implements ProjectService {
             throw new UnauthorizedAccessException("User is not a member of the project");
         }
 
-        List<ProjectMemberDTO> members = project.getMembers().stream()
-                .map(member -> new ProjectMemberDTO(project.getProjectId(), member.getUser().getUserId(), member.getRole().name()))
+        List<ProjectMemberSummaryDTO> members = project.getMembers().stream()
+                .map(member -> new ProjectMemberSummaryDTO(
+                        member.getUser().getUserId(),
+                        member.getRole().name()))
                 .collect(Collectors.toList());
+
 
         List<TaskSummaryDTO> tasks = project.getTasks().stream()
                 .map(task -> new TaskSummaryDTO(task.getTaskId(), task.getTitle()))
@@ -102,11 +93,8 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional(readOnly = true)
     public List<UserProjectDTO> getUserProjects(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        return user.getProjectMembers().stream()
-                .map(member -> {
-                    Project project = member.getProject();
-                    return new UserProjectDTO(project.getProjectId(), project.getName(), project.getStatus().name());
-                })
+        return projectRepository.findByMembers_User_UserId(userId).stream()
+                .map(project -> new UserProjectDTO(project.getProjectId(), project.getName(), project.getStatus().name()))
                 .collect(Collectors.toList());
     }
 
@@ -131,7 +119,8 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project not found"));
         User user = userRepository.findById(memberDTO.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (projectMemberRepository.existsByProjectProjectIdAndUserUserId(projectId, memberDTO.getUserId())) {
+        // 변경된 메서드 이름 사용
+        if (projectMemberRepository.existsByProject_ProjectIdAndUser_UserId(projectId, memberDTO.getUserId())) {
             throw new MemberAlreadyExistsException("Member already exists in the project");
         }
 
@@ -144,9 +133,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void removeMemberFromProject(String userId, Long projectId, String memberUserId) {
-        ProjectMember member = projectMemberRepository.findByProjectProjectIdAndUserUserId(projectId, memberUserId)
+        // 변경된 메서드 이름 사용
+        ProjectMember member = projectMemberRepository.findByProject_ProjectIdAndUser_UserId(projectId, memberUserId)
                 .orElseThrow(() -> new MemberNotFoundException("Member not found in the project"));
 
         projectMemberRepository.delete(member);
     }
+
 }

@@ -1,12 +1,12 @@
-package com.nhnacademy.minidooray3teamaccountapi.dto.project;
+package com.nhnacademy.minidooray3teamaccountapi.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProjectMemberDTO {
     private Long projectMemberId;
     private String userId;

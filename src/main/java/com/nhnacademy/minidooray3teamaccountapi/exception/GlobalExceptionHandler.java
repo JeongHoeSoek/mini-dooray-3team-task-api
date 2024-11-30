@@ -1,11 +1,12 @@
 package com.nhnacademy.minidooray3teamaccountapi.exception;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ErrorDTO;
-import java.time.LocalDateTime;
+import com.nhnacademy.minidooray3teamaccountapi.dto.ErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

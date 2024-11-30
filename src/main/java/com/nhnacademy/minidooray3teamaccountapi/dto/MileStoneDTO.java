@@ -1,4 +1,4 @@
-package com.nhnacademy.minidooray3teamaccountapi.dto.milestone;
+package com.nhnacademy.minidooray3teamaccountapi.dto;
 
 import lombok.Data;
 

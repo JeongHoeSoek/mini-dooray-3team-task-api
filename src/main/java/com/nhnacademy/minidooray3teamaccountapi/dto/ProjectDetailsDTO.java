@@ -1,7 +1,5 @@
-package com.nhnacademy.minidooray3teamaccountapi.dto.project;
+package com.nhnacademy.minidooray3teamaccountapi.dto;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.milestone.MilestoneSummaryDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectMemberDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,8 +13,8 @@ public class ProjectDetailsDTO {
     private String name;
     private String status;
     private LocalDateTime createdAt;
-    private List<ProjectMemberDTO> projectMembers;
+    private List<ProjectMemberSummaryDTO> projectMembers;
     private List<TaskSummaryDTO> tasks;
     private List<MilestoneSummaryDTO> milestones;
-    private List<com.nhnacademy.minidooray3teamaccountapi.dto.TagSummaryDTO> tags;
+    private List<TagSummaryDTO> tags;
 }

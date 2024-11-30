@@ -1,7 +1,7 @@
 package com.nhnacademy.minidooray3teamaccountapi.service;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.milestone.MileStoneRequestDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.milestone.MileStoneResponseDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneRequestDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.entity.MileStone;
 import com.nhnacademy.minidooray3teamaccountapi.repository.MilestoneRepository;
 import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectRepository;

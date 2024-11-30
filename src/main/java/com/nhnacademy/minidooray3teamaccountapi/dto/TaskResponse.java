@@ -1,7 +1,5 @@
 package com.nhnacademy.minidooray3teamaccountapi.dto;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.milestone.MileStoneDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectMemberDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;

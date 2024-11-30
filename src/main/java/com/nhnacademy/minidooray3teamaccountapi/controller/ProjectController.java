@@ -1,11 +1,6 @@
 package com.nhnacademy.minidooray3teamaccountapi.controller;
 
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectCreateRequestDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectDetailsDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectMemberDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.ProjectMemberSummaryDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.project.UserProjectDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.*;
 import com.nhnacademy.minidooray3teamaccountapi.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
