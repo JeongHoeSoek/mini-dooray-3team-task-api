@@ -1,6 +1,8 @@
 package com.nhnacademy.minidooray3teamaccountapi.service;
 
 import com.nhnacademy.minidooray3teamaccountapi.dto.*;
+import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDTO;
 import com.nhnacademy.minidooray3teamaccountapi.entity.*;
 import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundException;
 import com.nhnacademy.minidooray3teamaccountapi.repository.*;
@@ -116,7 +118,7 @@ public class TaskService {
         response.setCreatedAt(task.getCreatedAt());
 
         if (task.getMilestone() != null) {
-            MileStoneDto milestoneDto = new MileStoneDto();
+            MileStoneDTO milestoneDto = new MileStoneDTO();
             milestoneDto.setMilestoneId(task.getMilestone().getMilestoneId());
             milestoneDto.setName(task.getMilestone().getName());
             milestoneDto.setStatus(task.getMilestone().getStatus().name());
@@ -124,8 +126,8 @@ public class TaskService {
         }
 
         if (task.getTaskTags() != null) {
-            List<TagDto> tags = task.getTaskTags().stream().map(taskTag -> {
-                TagDto tagDto = new TagDto();
+            List<TagDTO> tags = task.getTaskTags().stream().map(taskTag -> {
+                TagDTO tagDto = new TagDTO();
                 tagDto.setTagId(taskTag.getTag().getTagId());
                 tagDto.setName(taskTag.getTag().getName());
                 return tagDto;
