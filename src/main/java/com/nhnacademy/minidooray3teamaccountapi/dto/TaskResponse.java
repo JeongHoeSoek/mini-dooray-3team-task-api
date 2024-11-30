@@ -9,8 +9,8 @@ public class TaskResponse {
     private Long taskId;
     private String title;
     private String description;
-    private MileStoneResponseDTO mileStoneDto;
-    private List<TagResponseDTO> tags;
+    private MileStoneDTO mileStoneDto;
+    private List<TagDTO> tags;
     private List<CommentDto> comments;
     private ProjectMemberDTO createdBy;
     private LocalDateTime createdAt;

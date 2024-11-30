@@ -11,9 +11,11 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * 프로젝트를 찾을 수 없는 경우
-     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(404).body(ex.getMessage());
+    }
+
     @ExceptionHandler(ProjectNotFoundException.class)
     public ResponseEntity<ErrorDTO> handleProjectNotFound(ProjectNotFoundException ex) {
         return errorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -63,3 +65,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 }
+
+
