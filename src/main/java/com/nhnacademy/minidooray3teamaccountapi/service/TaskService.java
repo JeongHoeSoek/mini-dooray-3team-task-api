@@ -2,7 +2,7 @@ package com.nhnacademy.minidooray3teamaccountapi.service;
 
 import com.nhnacademy.minidooray3teamaccountapi.dto.CommentDto;
 import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneResponseDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDto;
+import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.TagResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.TaskRequest;
 import com.nhnacademy.minidooray3teamaccountapi.dto.TaskResponse;
