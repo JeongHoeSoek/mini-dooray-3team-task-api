@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CommentDto {
     private Long commentId;
-    private ProjectMemberDto projectMember;
+    private ProjectMemberDTO projectMember;
     private String content;
     private LocalDateTime createdAt;
 }

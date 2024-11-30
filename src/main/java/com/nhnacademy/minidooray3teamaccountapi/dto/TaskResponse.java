@@ -1,6 +1,5 @@
 package com.nhnacademy.minidooray3teamaccountapi.dto;
 
-import com.nhnacademy.minidooray3teamaccountapi.entity.ProjectMember;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
@@ -13,6 +12,6 @@ public class TaskResponse {
     private MileStoneDto mileStoneDto;
     private List<TagDto> tags;
     private List<CommentDto> comments;
-    private ProjectMemberDto createdBy;
+    private ProjectMemberDTO createdBy;
     private LocalDateTime createdAt;
 }

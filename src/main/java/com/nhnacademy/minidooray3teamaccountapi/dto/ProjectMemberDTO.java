@@ -5,9 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ProjectMemberDto {
+@AllArgsConstructor
+public class ProjectMemberDTO {
     private Long projectMemberId;
     private String userId;
     private String role;
