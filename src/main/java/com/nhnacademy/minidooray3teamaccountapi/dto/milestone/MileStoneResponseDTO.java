@@ -1,4 +1,4 @@
-package com.nhnacademy.minidooray3teamaccountapi.dto;
+package com.nhnacademy.minidooray3teamaccountapi.dto.milestone;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
