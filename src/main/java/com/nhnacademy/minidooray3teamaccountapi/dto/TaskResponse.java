@@ -12,6 +12,6 @@ public class TaskResponse {
     private MileStoneResponseDTO mileStoneDto;
     private List<TagResponseDTO> tags;
     private List<CommentDto> comments;
-    private ProjectMemberDto createdBy;
+    private ProjectMemberDTO createdBy;
     private LocalDateTime createdAt;
 }

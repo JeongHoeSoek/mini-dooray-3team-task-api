@@ -152,7 +152,7 @@ public class TaskService {
                 commentDto.setContent(comment.getContent());
                 commentDto.setCreatedAt(comment.getCreatedAt());
 
-                ProjectMemberDto memberDto = new ProjectMemberDto();
+                ProjectMemberDTO memberDto = new ProjectMemberDTO();
                 memberDto.setProjectMemberId(comment.getProjectMember().getProjectMemberId());
                 memberDto.setUserId(comment.getProjectMember().getUser().getUserId());
                 memberDto.setRole(comment.getProjectMember().getRole().name());
@@ -163,7 +163,7 @@ public class TaskService {
             response.setComments(comments);
         }
 
-        ProjectMemberDto createdBy = new ProjectMemberDto();
+        ProjectMemberDTO createdBy = new ProjectMemberDTO();
         createdBy.setProjectMemberId(task.getProjectMember().getProjectMemberId());
         createdBy.setUserId(task.getProjectMember().getUser().getUserId());
         createdBy.setRole(task.getProjectMember().getRole().name());
