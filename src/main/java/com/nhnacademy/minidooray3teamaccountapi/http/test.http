@@ -1,3 +1,24 @@
+### Create a new user
+POST http://localhost:8082/users
+Content-Type: application/json
+
+{
+  "userId": "admin-user",
+  "username": "John Doe",
+  "email": "john.doe@example.com"
+}
+
+### Create a new user
+POST http://localhost:8082/users
+Content-Type: application/json
+
+{
+  "userId": "new-member",
+  "username": "Kjj",
+  "email": "kjj.nhn@example.com"
+}
+
+
 ###http://localhost:8082/h2-console
 ###
 
@@ -14,7 +35,7 @@ X-User-Id: admin-user
 ###
 
 ### 특정 프로젝트 조회
-GET http://localhost:8082/projects/2
+GET http://localhost:8082/projects/1
 Content-Type: application/json
 X-User-Id: admin-user
 
@@ -28,7 +49,7 @@ X-User-Id: admin-user
 ###
 
 ### 프로젝트 멤버 추가
-POST http://localhost:8082/projects/2/members
+POST http://localhost:8082/projects/1/members
 Content-Type: application/json
 X-User-Id: admin-user
 
@@ -40,25 +61,25 @@ X-User-Id: admin-user
 ###
 
 ### 특정 프로젝트 조회 (멤버 추가 후)
-GET http://localhost:8082/projects/2
+GET http://localhost:8082/projects/1
 Content-Type: application/json
 X-User-Id: admin-user
 
 ###
 
 ### 프로젝트 멤버 삭제
-DELETE http://localhost:8082/projects/2/members/new-member
+DELETE http://localhost:8082/projects/1/members/new-member
 X-User-Id: admin-user
 
 ###
 
 ### 특정 프로젝트 조회 (멤버 삭제 후)
-GET http://localhost:8082/projects/2
+GET http://localhost:8082/projects/1
 Content-Type: application/json
 X-User-Id: admin-user
 
 ###
 
 ### 프로젝트 삭제
-DELETE http://localhost:8082/projects/2
+DELETE http://localhost:8082/projects/1
 X-User-Id: admin-user
