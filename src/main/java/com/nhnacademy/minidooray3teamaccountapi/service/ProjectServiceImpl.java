@@ -90,11 +90,8 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional(readOnly = true)
     public List<UserProjectDTO> getUserProjects(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        return user.getProjectMembers().stream()
-                .map(member -> {
-                    Project project = member.getProject();
-                    return new UserProjectDTO(project.getProjectId(), project.getName(), project.getStatus().name());
-                })
+        return projectRepository.findByMembers_User_UserId(userId).stream()
+                .map(project -> new UserProjectDTO(project.getProjectId(), project.getName(), project.getStatus().name()))
                 .collect(Collectors.toList());
     }
 
@@ -119,7 +116,8 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException("Project not found"));
         User user = userRepository.findById(memberDTO.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (projectMemberRepository.existsByProjectIdAndUserId(projectId, memberDTO.getUserId())) {
+        // 변경된 메서드 이름 사용
+        if (projectMemberRepository.existsByProject_ProjectIdAndUser_UserId(projectId, memberDTO.getUserId())) {
             throw new MemberAlreadyExistsException("Member already exists in the project");
         }
 
@@ -132,9 +130,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void removeMemberFromProject(String userId, Long projectId, String memberUserId) {
-        ProjectMember member = projectMemberRepository.findByProjectIdAndUserId(projectId, memberUserId)
+        // 변경된 메서드 이름 사용
+        ProjectMember member = projectMemberRepository.findByProject_ProjectIdAndUser_UserId(projectId, memberUserId)
                 .orElseThrow(() -> new MemberNotFoundException("Member not found in the project"));
 
         projectMemberRepository.delete(member);
     }
+
 }
