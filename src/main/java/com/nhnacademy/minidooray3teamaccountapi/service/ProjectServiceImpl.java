@@ -51,9 +51,12 @@ public class ProjectServiceImpl implements ProjectService {
             throw new UnauthorizedAccessException("User is not a member of the project");
         }
 
-        List<ProjectMemberDTO> members = project.getMembers().stream()
-                .map(member -> new ProjectMemberDTO(project.getProjectId(), member.getUser().getUserId(), member.getRole().name()))
+        List<ProjectMemberSummaryDTO> members = project.getMembers().stream()
+                .map(member -> new ProjectMemberSummaryDTO(
+                        member.getUser().getUserId(),
+                        member.getRole().name()))
                 .collect(Collectors.toList());
+
 
         List<TaskSummaryDTO> tasks = project.getTasks().stream()
                 .map(task -> new TaskSummaryDTO(task.getTaskId(), task.getTitle()))

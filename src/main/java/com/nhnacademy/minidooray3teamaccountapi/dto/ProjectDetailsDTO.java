@@ -13,7 +13,7 @@ public class ProjectDetailsDTO {
     private String name;
     private String status;
     private LocalDateTime createdAt;
-    private List<ProjectMemberDTO> projectMembers;
+    private List<ProjectMemberSummaryDTO> projectMembers;
     private List<TaskSummaryDTO> tasks;
     private List<MilestoneSummaryDTO> milestones;
     private List<TagSummaryDTO> tags;
