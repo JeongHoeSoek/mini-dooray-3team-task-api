@@ -6,5 +6,10 @@ Content-Type: application/json
   "name": "Backend"
 }
 
+### 테스트에 태그 추가
+POST http://localhost:8082/projects/1/tasks/1/tags/1
+Content-Type: application/json
+X-User-Id: admin-user
+
 ### 태그 삭제
 DELETE http://localhost:8082/projects/1/tags/1

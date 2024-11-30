@@ -1,6 +1,7 @@
 package com.nhnacademy.minidooray3teamaccountapi.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -46,9 +47,9 @@ public class Task {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE)
-    private List<TaskTag> taskTags;
+    private List<TaskTag> taskTags = new ArrayList<>();
 
 }

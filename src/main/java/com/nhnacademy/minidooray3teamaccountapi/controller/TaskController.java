@@ -1,7 +1,9 @@
 package com.nhnacademy.minidooray3teamaccountapi.controller;
 
+import com.nhnacademy.minidooray3teamaccountapi.dto.TagResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.TaskRequest;
 import com.nhnacademy.minidooray3teamaccountapi.dto.TaskResponse;
+import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundException;
 import com.nhnacademy.minidooray3teamaccountapi.service.TaskService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -68,4 +70,37 @@ public class TaskController {
         List<TaskResponse> tasks = taskService.getTasksByMemberId(projectId, memberId);
         return ResponseEntity.ok(tasks);
     }
+
+    // 태스크에 태그 추가
+    @PostMapping("/tasks/{taskId}/tags/{tagId}")
+    public ResponseEntity<TagResponseDTO> addTagToTask(
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
+            @PathVariable Long tagId,
+            @RequestHeader("X-User-Id") String userId) {
+        try {
+            TagResponseDTO responseDTO = taskService.addTagToTask(projectId, taskId, tagId, userId);
+            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 태스크에서 태그 제거
+    @DeleteMapping("/tasks/{taskId}/tags/{tagId}")
+    public ResponseEntity<Void> removeTagFromTask(
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
+            @PathVariable Long tagId,
+            @RequestHeader("X-User-Id") String userId) {
+        try {
+            taskService.removeTagFromTask(projectId, taskId, tagId, userId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
+

@@ -2,13 +2,14 @@ package com.nhnacademy.minidooray3teamaccountapi.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@Data
 public class TaskTag {
 
     @Id

@@ -9,12 +9,16 @@ import com.nhnacademy.minidooray3teamaccountapi.dto.TaskResponse;
 import com.nhnacademy.minidooray3teamaccountapi.entity.MileStone;
 import com.nhnacademy.minidooray3teamaccountapi.entity.Project;
 import com.nhnacademy.minidooray3teamaccountapi.entity.ProjectMember;
+import com.nhnacademy.minidooray3teamaccountapi.entity.Tag;
 import com.nhnacademy.minidooray3teamaccountapi.entity.Task;
+import com.nhnacademy.minidooray3teamaccountapi.entity.TaskTag;
 import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundException;
 import com.nhnacademy.minidooray3teamaccountapi.repository.MilestoneRepository;
 import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectMemberRepository;
 import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectRepository;
+import com.nhnacademy.minidooray3teamaccountapi.repository.TagRepository;
 import com.nhnacademy.minidooray3teamaccountapi.repository.TaskRepository;
+import com.nhnacademy.minidooray3teamaccountapi.repository.TaskTagRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -25,17 +29,23 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final ProjectMemberRepository projectMemberRepository;
-    private final MilestoneRepository milestoneRepository; // 변수명 수정
+    private final MilestoneRepository milestoneRepository;
     private final ProjectRepository projectRepository;
+    private final TagRepository tagRepository;
+    private final TaskTagRepository taskTagRepository;
 
     public TaskService(TaskRepository taskRepository,
                        ProjectMemberRepository projectMemberRepository,
                        MilestoneRepository milestoneRepository,
-                       ProjectRepository projectRepository) {
+                       ProjectRepository projectRepository,
+                       TagRepository tagRepository,
+                       TaskTagRepository taskTagRepository) {
         this.taskRepository = taskRepository;
         this.projectMemberRepository = projectMemberRepository;
         this.milestoneRepository = milestoneRepository;
         this.projectRepository = projectRepository;
+        this.tagRepository = tagRepository;
+        this.taskTagRepository = taskTagRepository;
     }
 
     @Transactional
@@ -120,49 +130,93 @@ public class TaskService {
         return tasks.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
+    // 태스크에 태그 추가
+    @Transactional
+    public TagResponseDTO addTagToTask(Long projectId, Long taskId, Long tagId, String userId) {
+        Task task = taskRepository.findByProject_ProjectIdAndTaskId(projectId, taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found in the project"));
+
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tag not found"));
+
+        boolean exists = taskTagRepository.existsByTaskAndTag(task, tag);
+        if (exists) {
+            throw new IllegalArgumentException("Tag already assigned to the task");
+        }
+
+        TaskTag taskTag = new TaskTag();
+        taskTag.setTask(task);
+        taskTag.setTag(tag);
+
+        taskTagRepository.save(taskTag);
+
+        TagResponseDTO tagResponseDTO = new TagResponseDTO(tag.getTagId(), tag.getName());
+
+        return tagResponseDTO;
+    }
+
+    // 태스크에서 태그 제거
+    @Transactional
+    public void removeTagFromTask(Long projectId, Long taskId, Long tagId, String userId) {
+        Task task = taskRepository.findByProject_ProjectIdAndTaskId(projectId, taskId).
+                orElseThrow(() -> new ResourceNotFoundException("Task not found in the project"));
+
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tag not found"));
+
+        TaskTag taskTag = taskTagRepository.findByTaskAndTag(task, tag)
+                .orElseThrow(() -> new ResourceNotFoundException("Tag not assigned to the task"));
+
+        taskTagRepository.delete(taskTag);
+    }
+
     private TaskResponse toResponse(Task task) {
         TaskResponse response = new TaskResponse();
-        response.setTaskId(task.getTaskId()); // 필드 이름 수정
+        response.setTaskId(task.getTaskId());
         response.setTitle(task.getTitle());
         response.setDescription(task.getDescription());
         response.setCreatedAt(task.getCreatedAt());
 
+        // 마일스톤 매핑
         if (task.getMilestone() != null) {
-            MileStoneResponseDTO milestoneDto = new MileStoneResponseDTO();
-            milestoneDto.setId(task.getMilestone().getMilestoneId());
-            milestoneDto.setName(task.getMilestone().getName());
-            milestoneDto.setStatus(task.getMilestone().getStatus().name());
-            response.setMileStoneDto(milestoneDto); // 메서드 이름 수정
+            MileStoneResponseDTO milestoneDto = new MileStoneResponseDTO(
+                    task.getMilestone().getMilestoneId(),
+                    task.getMilestone().getName(),
+                    task.getMilestone().getStatus().name()
+            );
+            response.setMileStoneDto(milestoneDto);
         }
 
+        // 태그 매핑
         if (task.getTaskTags() != null) {
-            List<TagResponseDTO> tags = task.getTaskTags().stream().map(taskTag -> {
-                TagResponseDTO tagDto = new TagResponseDTO();
-                tagDto.setTagId(taskTag.getTag().getTagId());
-                tagDto.setName(taskTag.getTag().getName());
-                return tagDto;
-            }).collect(Collectors.toList());
+            List<TagResponseDTO> tags = task.getTaskTags().stream()
+                    .map(taskTag -> new TagResponseDTO(taskTag.getTag().getTagId(), taskTag.getTag().getName()))
+                    .collect(Collectors.toList());
             response.setTags(tags);
         }
 
+        // 댓글 매핑
         if (task.getComments() != null) {
-            List<CommentDTO> comments = task.getComments().stream().map(comment -> {
-                CommentDTO commentDto = new CommentDTO();
-                commentDto.setCommentId(comment.getCommentId());
-                commentDto.setContent(comment.getContent());
-                commentDto.setCreatedAt(comment.getCreatedAt());
+            List<CommentDTO> comments = task.getComments().stream()
+                    .map(comment -> {
+                        CommentDTO commentDto = new CommentDTO();
+                        commentDto.setCommentId(comment.getCommentId());
+                        commentDto.setContent(comment.getContent());
+                        commentDto.setCreatedAt(comment.getCreatedAt());
 
-                ProjectMemberDTO memberDto = new ProjectMemberDTO();
-                memberDto.setProjectMemberId(comment.getProjectMember().getProjectMemberId());
-                memberDto.setUserId(comment.getProjectMember().getUser().getUserId());
-                memberDto.setRole(comment.getProjectMember().getRole().name());
-                commentDto.setProjectMember(memberDto);
+                        ProjectMemberDTO memberDto = new ProjectMemberDTO();
+                        memberDto.setProjectMemberId(comment.getProjectMember().getProjectMemberId());
+                        memberDto.setUserId(comment.getProjectMember().getUser().getUserId());
+                        memberDto.setRole(comment.getProjectMember().getRole().name());
+                        commentDto.setProjectMember(memberDto);
 
-                return commentDto;
-            }).collect(Collectors.toList());
+                        return commentDto;
+                    })
+                    .collect(Collectors.toList());
             response.setComments(comments);
         }
 
+        // 작성자 매핑
         ProjectMemberDTO createdBy = new ProjectMemberDTO();
         createdBy.setProjectMemberId(task.getProjectMember().getProjectMemberId());
         createdBy.setUserId(task.getProjectMember().getUser().getUserId());
@@ -172,4 +226,3 @@ public class TaskService {
         return response;
     }
 }
-

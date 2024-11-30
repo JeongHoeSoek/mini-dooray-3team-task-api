@@ -11,7 +11,7 @@ X-User-Id: admin-user
 ###
 
 ### 특정 프로젝트 조회
-GET http://localhost:8082/projects/2
+GET http://localhost:8082/projects/1
 Content-Type: application/json
 X-User-Id: admin-user
 
@@ -25,7 +25,7 @@ X-User-Id: admin-user
 ###
 
 ### 프로젝트 멤버 추가
-POST http://localhost:8082/projects/2/members
+POST http://localhost:8082/projects/1/members
 Content-Type: application/json
 X-User-Id: admin-user
 
@@ -37,31 +37,31 @@ X-User-Id: admin-user
 ###
 
 ### 특정 프로젝트 조회 (멤버 추가 후)
-GET http://localhost:8082/projects/2
+GET http://localhost:8082/projects/1
 Content-Type: application/json
 X-User-Id: admin-user
 
 ###
 
 ### 프로젝트 멤버 삭제
-DELETE http://localhost:8082/projects/2/members/new-member
+DELETE http://localhost:8082/projects/1/members/new-member
 X-User-Id: admin-user
 
 ###
 
 ### 특정 프로젝트 조회 (멤버 삭제 후)
-GET http://localhost:8082/projects/2
+GET http://localhost:8082/projects/1
 Content-Type: application/json
 X-User-Id: admin-user
 
 ###
 
 ### 프로젝트 삭제
-DELETE http://localhost:8082/projects/2
+DELETE http://localhost:8082/projects/1
 X-User-Id: admin-user
 
 ### 마일스톤 생성
-POST http://localhost:8082/projects/2/milestones
+POST http://localhost:8082/projects/1/milestones
 Content-Type: application/json
 X-User-Id: admin-user
 
@@ -71,7 +71,7 @@ X-User-Id: admin-user
 }
 
 ### Task 생성
-POST http://localhost:8082/projects/2/tasks
+POST http://localhost:8082/projects/1/tasks
 Content-Type: application/json
 X-User-Id: admin-user
 
@@ -83,13 +83,13 @@ X-User-Id: admin-user
 }
 
 ### Task 조회
-GET http://localhost:8082/projects/2/tasks/1
+GET http://localhost:8082/projects/1/tasks/1
 
 ### 특정 멤버가 작성한 테스크 조회
-GET http://localhost:8082/projects/2/members/1/tasks
+GET http://localhost:8082/projects/1/members/1/tasks
 
 ### Task 수정
-PUT http://localhost:8082/projects/2/tasks/1
+PUT http://localhost:8082/projects/1/tasks/1
 Content-Type: application/json
 X-User-Id: admin-user
 
@@ -100,7 +100,7 @@ X-User-Id: admin-user
 }
 
 ### 수정된 Task 조회
-GET http://localhost:8082/projects/2/tasks/1
+GET http://localhost:8082/projects/1/tasks/1
 
 ### Task 삭제
-DELETE http://localhost:8082/projects/2/tasks/1
+DELETE http://localhost:8082/projects/1/tasks/1
