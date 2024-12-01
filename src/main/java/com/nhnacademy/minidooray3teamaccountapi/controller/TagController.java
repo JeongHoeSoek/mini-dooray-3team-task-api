@@ -33,9 +33,9 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.OK).body(created);
     }
 
-    // Tag 삭제
-    @DeleteMapping("/{tagId}")
-    public ResponseEntity<TagResponseDTO> deleteTag(@PathVariable Long projectId, @PathVariable Long tagId) {
+    // Tag 삭제 (`DELETE` → `POST`)
+    @PostMapping("/{tagId}/delete")
+    public ResponseEntity<Void> deleteTag(@PathVariable Long projectId, @PathVariable Long tagId) {
         TagResponseDTO deleted = tagService.deleteTag(projectId, tagId);
 
         if (deleted == null) {

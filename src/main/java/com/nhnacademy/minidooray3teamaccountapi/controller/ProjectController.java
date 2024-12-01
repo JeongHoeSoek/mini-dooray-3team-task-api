@@ -35,7 +35,8 @@ public class ProjectController {
         return ResponseEntity.ok(userProjects);
     }
 
-    @DeleteMapping("/{id}")
+    // 프로젝트 삭제 (DELETE → POST)
+    @PostMapping("/{id}/delete")
     public ResponseEntity<Void> deleteProject(@RequestHeader("X-User-Id") String userId, @PathVariable Long id) {
         projectService.deleteProject(userId, id);
         return ResponseEntity.noContent().build();
@@ -49,7 +50,8 @@ public class ProjectController {
         return ResponseEntity.ok(projectMember);
     }
 
-    @DeleteMapping("/{id}/members/{memberUserId}")
+    // 프로젝트 멤버 삭제 (DELETE → POST)
+    @PostMapping("/{id}/members/{memberUserId}/delete")
     public ResponseEntity<Void> removeMemberFromProject(@RequestHeader("X-User-Id") String userId,
                                                         @PathVariable Long id,
                                                         @PathVariable String memberUserId) {

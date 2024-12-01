@@ -14,7 +14,7 @@ GET http://localhost:8082/projects/1/milestones
 GET http://localhost:8082/projects/1/milestones/1
 
 ### 마일스톤 수정
-PATCH http://localhost:8082/projects/1/milestones/1
+POST http://localhost:8082/projects/1/milestones/1/update
 Content-Type: application/json
 
 {
@@ -22,5 +22,7 @@ Content-Type: application/json
   "status": "PROGRESS"
 }
 
+
 ### 마일스톤 삭제
-DELETE http://localhost:8082/projects/1/milestones/1
+POST http://localhost:8082/projects/1/milestones/1/delete
+

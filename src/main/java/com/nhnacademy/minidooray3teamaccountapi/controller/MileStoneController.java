@@ -49,8 +49,8 @@ public class MileStoneController {
         return ResponseEntity.status(HttpStatus.OK).body(created);
     }
 
-    // 마일스톤 업데이트
-    @PatchMapping("/{milestoneId}")
+    // 마일스톤 수정 (`PATCH` → `POST`)
+    @PostMapping("/{milestoneId}/update")
     public ResponseEntity<MileStoneResponseDTO> updateMileStone(@PathVariable Long projectId,
                                                                 @PathVariable Long milestoneId,
                                                                 @RequestBody MileStoneRequestDTO requestDTO) {
@@ -63,10 +63,10 @@ public class MileStoneController {
         return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 
-    // 마일스톤 삭제
-    @DeleteMapping("{milestoneId}")
-    public ResponseEntity<MileStoneResponseDTO> deleteMileStone(@PathVariable Long projectId,
-                                                                @PathVariable Long milestoneId) {
+    // 마일스톤 삭제 (`DELETE` → `POST`)
+    @PostMapping("/{milestoneId}/delete")
+    public ResponseEntity<Void> deleteMileStone(@PathVariable Long projectId,
+                                                @PathVariable Long milestoneId) {
         MileStoneResponseDTO deleted = mileStoneService.deleteMileStone(projectId, milestoneId);
 
         if (deleted == null) {

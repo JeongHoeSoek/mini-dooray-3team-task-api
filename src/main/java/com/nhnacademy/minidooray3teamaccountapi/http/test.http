@@ -68,7 +68,8 @@ X-User-Id: admin-user
 ###
 
 ### 프로젝트 멤버 삭제
-DELETE http://localhost:8082/projects/1/members/new-member
+POST http://localhost:8082/projects/1/members/new-member/delete
+Content-Type: application/json
 X-User-Id: admin-user
 
 ###
@@ -81,5 +82,7 @@ X-User-Id: admin-user
 ###
 
 ### 프로젝트 삭제
-DELETE http://localhost:8082/projects/1
+POST http://localhost:8082/projects/1/delete
+Content-Type: application/json
 X-User-Id: admin-user
+

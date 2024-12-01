@@ -12,4 +12,6 @@ Content-Type: application/json
 X-User-Id: admin-user
 
 ### 태그 삭제
-DELETE http://localhost:8082/projects/1/tags/1
+POST http://localhost:8082/projects/1/tags/1/delete
+Content-Type: application/json
+

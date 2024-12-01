@@ -60,8 +60,8 @@ public class CommentController {
         return ResponseEntity.ok(comments);
     }
 
-    // 코멘트 수정
-    @PutMapping("/{commentId}")
+    // 코멘트 수정 (POST로 변경)
+    @PostMapping("/{commentId}/update")
     public ResponseEntity<CommentResponseDTO> updateComment(
             @PathVariable Long projectId,
             @PathVariable Long taskId,
@@ -78,8 +78,9 @@ public class CommentController {
         }
     }
 
-    // 코멘트 삭제
-    @DeleteMapping("/{commentId}")
+
+    // 코멘트 삭제 (POST로 변경)
+    @PostMapping("/{commentId}/delete")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long projectId,
             @PathVariable Long taskId,

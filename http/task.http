@@ -44,7 +44,8 @@ X-User-Id: admin-user
 ###
 
 ### 프로젝트 멤버 삭제
-DELETE http://localhost:8082/projects/1/members/new-member
+POST http://localhost:8082/projects/1/members/new-member/delete
+Content-Type: application/json
 X-User-Id: admin-user
 
 ###
@@ -57,7 +58,8 @@ X-User-Id: admin-user
 ###
 
 ### 프로젝트 삭제
-DELETE http://localhost:8082/projects/1
+POST http://localhost:8082/projects/1/delete
+Content-Type: application/json
 X-User-Id: admin-user
 
 ### 마일스톤 생성
@@ -89,9 +91,8 @@ GET http://localhost:8082/projects/1/tasks/1
 GET http://localhost:8082/projects/1/members/1/tasks
 
 ### Task 수정
-PUT http://localhost:8082/projects/1/tasks/1
+POST http://localhost:8082/projects/1/tasks/1/update
 Content-Type: application/json
-X-User-Id: admin-user
 
 {
   "title": "Updated Task Title",
@@ -103,4 +104,4 @@ X-User-Id: admin-user
 GET http://localhost:8082/projects/1/tasks/1
 
 ### Task 삭제
-DELETE http://localhost:8082/projects/1/tasks/1
+POST http://localhost:8082/projects/1/tasks/1/delete

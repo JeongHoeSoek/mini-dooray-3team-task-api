@@ -40,8 +40,8 @@ public class TaskController {
         return ResponseEntity.ok(taskResponse);
     }
 
-    // Task 수정
-    @PutMapping("/tasks/{taskId}")
+    // Task 수정 (`PUT` → `POST`)
+    @PostMapping("/tasks/{taskId}/update")
     public ResponseEntity<TaskResponse> updateTask(
             @PathVariable Long projectId,
             @PathVariable Long taskId,
@@ -51,8 +51,8 @@ public class TaskController {
         return ResponseEntity.ok(taskResponse);
     }
 
-    // Task 삭제
-    @DeleteMapping("/tasks/{taskId}")
+    // Task 삭제 (`DELETE` → `POST`)
+    @PostMapping("/tasks/{taskId}/delete")
     public ResponseEntity<Void> deleteTask(
             @PathVariable Long projectId,
             @PathVariable Long taskId) {
@@ -88,8 +88,8 @@ public class TaskController {
         }
     }
 
-    // 태스크에서 태그 제거
-    @DeleteMapping("/tasks/{taskId}/tags/{tagId}")
+    // 태스크에서 태그 제거 (`DELETE` → `POST`)
+    @PostMapping("/tasks/{taskId}/tags/{tagId}/remove")
     public ResponseEntity<Void> removeTagFromTask(
             @PathVariable Long projectId,
             @PathVariable Long taskId,

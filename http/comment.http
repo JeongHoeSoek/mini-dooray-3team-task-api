@@ -11,7 +11,7 @@ X-User-Id: admin-user
 GET http://localhost:8082/projects/1/tasks/1/comments
 
 ### 코멘트 수정
-PUT http://localhost:8082/projects/1/tasks/1/comments/1
+POST http://localhost:8082/projects/1/tasks/1/comments/1/update
 Content-Type: application/json
 X-User-Id: admin-user
 
@@ -19,6 +19,8 @@ X-User-Id: admin-user
   "content": "수정된 코멘트 내용"
 }
 
+
 ### 코멘트 삭제
-DELETE http://localhost:8082/projects/1/tasks/1/comments/2
+POST http://localhost:8082/projects/1/tasks/1/comments/1/delete
+Content-Type: application/json
 X-User-Id: admin-user
