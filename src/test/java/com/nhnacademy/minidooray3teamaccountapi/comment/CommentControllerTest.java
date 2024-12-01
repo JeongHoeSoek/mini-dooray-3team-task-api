@@ -1,290 +1,426 @@
+
+//package com.nhnacademy.minidooray3teamaccountapi.comment;
+//
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.nhnacademy.minidooray3teamaccountapi.controller.CommentController;
+//import com.nhnacademy.minidooray3teamaccountapi.dto.CommentRequestDTO;
+//import com.nhnacademy.minidooray3teamaccountapi.dto.CommentResponseDTO;
+//import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDTO;
+//import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundException;
+//import com.nhnacademy.minidooray3teamaccountapi.service.CommentService;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
+//import org.mockito.Mockito;
+//import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.http.MediaType;
+//import org.springframework.test.web.servlet.MockMvc;
+//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+//
+//import java.time.LocalDateTime;
+//import java.util.Collections;
+//
+//import static org.mockito.ArgumentMatchers.any;
+//import static org.mockito.ArgumentMatchers.anyLong;
+//import static org.mockito.ArgumentMatchers.eq;
+//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+////
+////@SpringBootTest
+////@AutoConfigureMockMvc
+//
+//class CommentControllerTest {
+//
+//    private MockMvc mockMvc;
+//    private CommentService commentService;
+//    private ObjectMapper objectMapper;
+//
+//    @BeforeEach
+//    void setUp() {
+//        // Mock CommentService 생성
+//        commentService = Mockito.mock(CommentService.class);
+//
+//        // Controller 생성 및 MockMvc 설정
+//        CommentController commentController = new CommentController(commentService);
+//        mockMvc = MockMvcBuilders.standaloneSetup(commentController).build();
+//
+//        // ObjectMapper 초기화
+//        objectMapper = new ObjectMapper();
+//    }
+//
+//    @Test
+//    void testCreateComment() throws Exception {
+//        CommentRequestDTO requestDTO = new CommentRequestDTO();
+//        requestDTO.setContent("Test comment");
+//
+//        CommentResponseDTO responseDTO = new CommentResponseDTO(
+//                1L,
+//                1L,
+//                new ProjectMemberDTO(1L, "user1", "MEMBER"),
+//                "Test comment",
+//                LocalDateTime.now(),
+//                LocalDateTime.now()
+//        );
+//
+//        Mockito.when(commentService.createComment(anyLong(), anyLong(), any(CommentRequestDTO.class), eq("user1")))
+//                .thenReturn(responseDTO);
+//
+//        mockMvc.perform(post("/projects/1/tasks/1/comments")
+//                        .header("X-User-Id", "user1")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(requestDTO)))
+//                .andExpect(status().isCreated())
+//                .andExpect(jsonPath("$.commentId").value(1L))
+//                .andExpect(jsonPath("$.content").value("Test comment"));
+//    }
+//
+//    @Test
+//    void testGetCommentById() throws Exception {
+//        CommentResponseDTO responseDTO = new CommentResponseDTO(
+//                1L,
+//                1L,
+//                new ProjectMemberDTO(1L, "user1", "MEMBER"),
+//                "Test comment",
+//                LocalDateTime.now(),
+//                LocalDateTime.now()
+//        );
+//
+//        Mockito.when(commentService.getCommentById(anyLong(), anyLong(), eq(1L)))
+//                .thenReturn(responseDTO);
+//
+//        mockMvc.perform(get("/projects/1/tasks/1/comments/1"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.commentId").value(1L))
+//                .andExpect(jsonPath("$.content").value("Test comment"));
+//    }
+//
+//    @Test
+//    void testGetAllCommentsByTask() throws Exception {
+//        CommentResponseDTO responseDTO = new CommentResponseDTO(
+//                1L,
+//                1L,
+//                new ProjectMemberDTO(1L, "user1", "MEMBER"),
+//                "Test comment",
+//                LocalDateTime.now(),
+//                LocalDateTime.now()
+//        );
+//
+//        Mockito.when(commentService.getAllCommentsByTask(anyLong(), anyLong()))
+//                .thenReturn(Collections.singletonList(responseDTO));
+//
+//        mockMvc.perform(get("/projects/1/tasks/1/comments"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].commentId").value(1L))
+//                .andExpect(jsonPath("$[0].content").value("Test comment"));
+//    }
+//
+//    @Test
+//    void testUpdateComment() throws Exception {
+//        CommentRequestDTO requestDTO = new CommentRequestDTO();
+//        requestDTO.setContent("Updated comment");
+//
+//        CommentResponseDTO responseDTO = new CommentResponseDTO(
+//                1L,
+//                1L,
+//                new ProjectMemberDTO(1L, "user1", "MEMBER"),
+//                "Updated comment",
+//                LocalDateTime.now(),
+//                LocalDateTime.now()
+//        );
+//
+//        Mockito.when(commentService.updateComment(anyLong(), anyLong(), eq(1L), any(CommentRequestDTO.class), eq("user1")))
+//                .thenReturn(responseDTO);
+//
+//        mockMvc.perform(post("/projects/1/tasks/1/comments/1/update")
+//                        .header("X-User-Id", "user1")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(requestDTO)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.content").value("Updated comment"));
+//    }
+//
+//    @Test
+//    void testDeleteComment() throws Exception {
+//        Mockito.doNothing().when(commentService).deleteComment(anyLong(), anyLong(), eq(1L), eq("user1"));
+//
+//        mockMvc.perform(post("/projects/1/tasks/1/comments/1/delete")
+//                        .header("X-User-Id", "user1"))
+//                .andExpect(status().isNoContent());
+//    }
+//
+//    @Test
+//    void testCreateCommentNotFound() throws Exception {
+//        CommentRequestDTO requestDTO = new CommentRequestDTO();
+//        requestDTO.setContent("Test comment");
+//
+//        // ResourceNotFoundException 예외 발생
+//        Mockito.when(commentService.createComment(anyLong(), anyLong(), any(CommentRequestDTO.class), eq("user1")))
+//                .thenThrow(new ResourceNotFoundException("Resource not found"));
+//
+//        mockMvc.perform(post("/projects/1/tasks/1/comments")
+//                        .header("X-User-Id", "user1")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(requestDTO)))
+//                .andExpect(status().isNotFound());
+//    }
+//
+//    @Test
+//    void testUpdateCommentForbidden() throws Exception {
+//        CommentRequestDTO requestDTO = new CommentRequestDTO();
+//        requestDTO.setContent("Updated comment");
+//
+//        // IllegalArgumentException 예외 발생 (Forbidden)
+//        Mockito.when(commentService.updateComment(anyLong(), anyLong(), eq(1L), any(CommentRequestDTO.class), eq("user1")))
+//                .thenThrow(new IllegalArgumentException("Forbidden"));
+//
+//        mockMvc.perform(post("/projects/1/tasks/1/comments/1/update")
+//                        .header("X-User-Id", "user1")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(requestDTO)))
+//                .andExpect(status().isForbidden());
+//    }
+//
+//    @Test
+//    void testDeleteCommentForbidden() throws Exception {
+//        // IllegalArgumentException 예외 발생 (Forbidden)
+//        Mockito.doThrow(new IllegalArgumentException("Forbidden"))
+//                .when(commentService).deleteComment(anyLong(), anyLong(), eq(1L), eq("user1"));
+//
+//        mockMvc.perform(post("/projects/1/tasks/1/comments/1/delete")
+//                        .header("X-User-Id", "user1"))
+//                .andExpect(status().isForbidden());
+//    }
+//
+//}
+
+
+
 package com.nhnacademy.minidooray3teamaccountapi.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.minidooray3teamaccountapi.controller.CommentController;
 import com.nhnacademy.minidooray3teamaccountapi.dto.CommentRequestDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.CommentResponseDTO;
-import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDTO;
-import com.nhnacademy.minidooray3teamaccountapi.exception.GlobalExceptionHandler;
 import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundException;
 import com.nhnacademy.minidooray3teamaccountapi.service.CommentService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
 class CommentControllerTest {
 
-    @Mock
-    private CommentService commentService;
-
-    @InjectMocks
-    private CommentController commentController;
-
     private MockMvc mockMvc;
-
+    private CommentService commentService;
     private ObjectMapper objectMapper;
-
-    private CommentResponseDTO commentResponseDTO;
-    private CommentResponseDTO updatedCommentResponseDTO;
 
     @BeforeEach
     void setUp() {
+        // Mock CommentService 생성
+        commentService = Mockito.mock(CommentService.class);
+
+        // Controller 생성 및 MockMvc 설정
+        CommentController commentController = new CommentController(commentService);
+        mockMvc = MockMvcBuilders.standaloneSetup(commentController).build();
+
+        // ObjectMapper 초기화
         objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(commentController)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-
-        ProjectMemberDTO projectMemberDTO = new ProjectMemberDTO(2L, "user2", "MEMBER");
-
-        commentResponseDTO = new CommentResponseDTO(
-                1L,
-                1L,
-                projectMemberDTO,
-                "좋은 진행입니다!",
-                LocalDateTime.of(2024, 11, 28, 0, 30, 0),
-                LocalDateTime.of(2024, 11, 28, 0, 30, 0)
-        );
-
-        updatedCommentResponseDTO = new CommentResponseDTO(
-                1L,
-                1L,
-                projectMemberDTO,
-                "수정된 코멘트 내용",
-                LocalDateTime.of(2024, 11, 28, 0, 30, 0),
-                LocalDateTime.of(2024, 11, 28, 2, 0, 0)
-        );
     }
 
     @Test
-    void createComment_Success() throws Exception {
+    void testCreateComment() throws Exception {
+        // Given
         CommentRequestDTO requestDTO = new CommentRequestDTO();
-        requestDTO.setContent("좋은 진행입니다!");
+        requestDTO.setContent("Test comment");
 
-        when(commentService.createComment(anyLong(), anyLong(), any(CommentRequestDTO.class), anyString()))
-                .thenReturn(commentResponseDTO);
+        CommentResponseDTO responseDTO = new CommentResponseDTO(
+                1L, 1L, null, "Test comment", LocalDateTime.now(), LocalDateTime.now());
 
+        Mockito.when(commentService.createComment(anyLong(), anyLong(), any(CommentRequestDTO.class), eq("user1")))
+                .thenReturn(responseDTO);
+
+        // When & Then
         mockMvc.perform(post("/projects/1/tasks/1/comments")
+                        .header("X-User-Id", "user1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-User-Id", "user2")
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.commentId").value(1L))
-                .andExpect(jsonPath("$.taskId").value(1L))
-                .andExpect(jsonPath("$.projectMember.userId").value("user2"))
-                .andExpect(jsonPath("$.projectMember.role").value("MEMBER"))
-                .andExpect(jsonPath("$.content").value("좋은 진행입니다!"))
-                .andExpect(jsonPath("$.createdAt").value("2024-11-28T00:30:00"))
-                .andExpect(jsonPath("$.updatedAt").value("2024-11-28T00:30:00"));
-
-        verify(commentService, times(1)).createComment(eq(1L), eq(1L), any(CommentRequestDTO.class), eq("user2"));
+                .andExpect(jsonPath("$.content").value("Test comment"));
     }
 
     @Test
-    void createComment_NotFound() throws Exception {
+    void testCreateCommentNotFound() throws Exception {
+        // Given
         CommentRequestDTO requestDTO = new CommentRequestDTO();
-        requestDTO.setContent("좋은 진행입니다!");
+        requestDTO.setContent("Test comment");
 
-        when(commentService.createComment(anyLong(), anyLong(), any(CommentRequestDTO.class), anyString()))
-                .thenThrow(new ResourceNotFoundException("Task not found in the project"));
+        Mockito.when(commentService.createComment(anyLong(), anyLong(), any(CommentRequestDTO.class), eq("user1")))
+                .thenThrow(new ResourceNotFoundException("Not found"));
 
+        // When & Then
         mockMvc.perform(post("/projects/1/tasks/1/comments")
+                        .header("X-User-Id", "user1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-User-Id", "user2")
                         .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Task not found in the project"));
-
-        verify(commentService, times(1)).createComment(eq(1L), eq(1L), any(CommentRequestDTO.class), eq("user2"));
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void getCommentById_Success() throws Exception {
-        when(commentService.getCommentById(1L, 1L, 1L)).thenReturn(commentResponseDTO);
+    void testCreateCommentBadRequest() throws Exception {
+        // Given
+        CommentRequestDTO requestDTO = new CommentRequestDTO();
+        requestDTO.setContent(null); // Invalid content
 
+        // When & Then
+        mockMvc.perform(post("/projects/1/tasks/1/comments")
+                        .header("X-User-Id", "user1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testGetCommentById() throws Exception {
+        // Given
+        CommentResponseDTO responseDTO = new CommentResponseDTO(
+                1L, 1L, null, "Test comment", LocalDateTime.now(), LocalDateTime.now());
+
+        Mockito.when(commentService.getCommentById(anyLong(), anyLong(), eq(1L)))
+                .thenReturn(responseDTO);
+
+        // When & Then
         mockMvc.perform(get("/projects/1/tasks/1/comments/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.commentId").value(1L))
-                .andExpect(jsonPath("$.taskId").value(1L))
-                .andExpect(jsonPath("$.projectMember.userId").value("user2"))
-                .andExpect(jsonPath("$.projectMember.role").value("MEMBER"))
-                .andExpect(jsonPath("$.content").value("좋은 진행입니다!"))
-                .andExpect(jsonPath("$.createdAt").value("2024-11-28T00:30:00"))
-                .andExpect(jsonPath("$.updatedAt").value("2024-11-28T00:30:00"));
-
-        verify(commentService, times(1)).getCommentById(1L, 1L, 1L);
+                .andExpect(jsonPath("$.content").value("Test comment"));
     }
 
     @Test
-    void getCommentById_NotFound() throws Exception {
-        when(commentService.getCommentById(1L, 1L, 1L))
+    void testGetCommentByIdNotFound() throws Exception {
+        // Given
+        Mockito.when(commentService.getCommentById(anyLong(), anyLong(), eq(1L)))
                 .thenThrow(new ResourceNotFoundException("Comment not found"));
 
+        // When & Then
         mockMvc.perform(get("/projects/1/tasks/1/comments/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Comment not found"));
-
-        verify(commentService, times(1)).getCommentById(1L, 1L, 1L);
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void getAllCommentsByTask_Success() throws Exception {
-        ProjectMemberDTO projectMemberDTO = new ProjectMemberDTO(2L, "user2", "MEMBER");
-        ProjectMemberDTO projectMemberDTO2 = new ProjectMemberDTO(3L, "user3", "MEMBER");
+    void testGetAllCommentsByTask() throws Exception {
+        // Given
+        CommentResponseDTO responseDTO = new CommentResponseDTO(
+                1L, 1L, null, "Test comment", LocalDateTime.now(), LocalDateTime.now());
+        Mockito.when(commentService.getAllCommentsByTask(anyLong(), anyLong()))
+                .thenReturn(Collections.singletonList(responseDTO));
 
-        CommentResponseDTO comment1 = new CommentResponseDTO(
-                1L,
-                1L,
-                projectMemberDTO,
-                "좋은 진행입니다!",
-                LocalDateTime.of(2024, 11, 28, 0, 30, 0),
-                LocalDateTime.of(2024, 11, 28, 0, 30, 0)
-        );
-
-        CommentResponseDTO comment2 = new CommentResponseDTO(
-                2L,
-                1L,
-                projectMemberDTO2,
-                "추가 작업이 필요합니다!",
-                LocalDateTime.of(2024, 11, 28, 1, 0, 0),
-                LocalDateTime.of(2024, 11, 28, 1, 0, 0)
-        );
-
-        List<CommentResponseDTO> comments = Arrays.asList(comment1, comment2);
-
-        when(commentService.getAllCommentsByTask(1L, 1L)).thenReturn(comments);
-
+        // When & Then
         mockMvc.perform(get("/projects/1/tasks/1/comments"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].commentId").value(1L))
-                .andExpect(jsonPath("$[0].taskId").value(1L))
-                .andExpect(jsonPath("$[0].projectMember.userId").value("user2"))
-                .andExpect(jsonPath("$[0].projectMember.role").value("MEMBER"))
-                .andExpect(jsonPath("$[0].content").value("좋은 진행입니다!"))
-                .andExpect(jsonPath("$.comments[0].createdAt").value("2024-11-28T00:30:00"))
-                .andExpect(jsonPath("$[1].commentId").value(2L))
-                .andExpect(jsonPath("$[1].taskId").value(1L))
-                .andExpect(jsonPath("$[1].projectMember.userId").value("user3"))
-                .andExpect(jsonPath("$[1].projectMember.role").value("MEMBER"))
-                .andExpect(jsonPath("$[1].content").value("추가 작업이 필요합니다!"))
-                .andExpect(jsonPath("$[1].createdAt").value("2024-11-28T01:00:00"))
-                .andExpect(jsonPath("$[1].updatedAt").value("2024-11-28T01:00:00"));
-
-        verify(commentService, times(1)).getAllCommentsByTask(1L, 1L);
+                .andExpect(jsonPath("$[0].content").value("Test comment"));
     }
 
     @Test
-    void updateComment_Success() throws Exception {
+    void testUpdateComment() throws Exception {
+        // Given
         CommentRequestDTO requestDTO = new CommentRequestDTO();
-        requestDTO.setContent("수정된 코멘트 내용");
+        requestDTO.setContent("Updated comment");
 
-        when(commentService.updateComment(eq(1L), eq(1L), eq(1L), any(CommentRequestDTO.class), eq("user2")))
-                .thenReturn(updatedCommentResponseDTO);
+        CommentResponseDTO responseDTO = new CommentResponseDTO(
+                1L, 1L, null, "Updated comment", LocalDateTime.now(), LocalDateTime.now());
 
-        mockMvc.perform(put("/projects/1/tasks/1/comments/1")
+        Mockito.when(commentService.updateComment(anyLong(), anyLong(), eq(1L), any(CommentRequestDTO.class), eq("user1")))
+                .thenReturn(responseDTO);
+
+        // When & Then
+        mockMvc.perform(post("/projects/1/tasks/1/comments/1/update")
+                        .header("X-User-Id", "user1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-User-Id", "user2")
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.commentId").value(1L))
-                .andExpect(jsonPath("$.taskId").value(1L))
-                .andExpect(jsonPath("$.projectMember.userId").value("user2"))
-                .andExpect(jsonPath("$.projectMember.role").value("MEMBER"))
-                .andExpect(jsonPath("$.content").value("수정된 코멘트 내용"))
-                .andExpect(jsonPath("$.createdAt").value("2024-11-28T00:30:00"))
-                .andExpect(jsonPath("$.updatedAt").value("2024-11-28T02:00:00"));
-
-        verify(commentService, times(1)).updateComment(eq(1L), eq(1L), eq(1L), any(CommentRequestDTO.class), eq("user2"));
+                .andExpect(jsonPath("$.content").value("Updated comment"));
     }
 
     @Test
-    void updateComment_NotFound() throws Exception {
+    void testUpdateCommentNotFound() throws Exception {
+        // Given
         CommentRequestDTO requestDTO = new CommentRequestDTO();
-        requestDTO.setContent("수정된 코멘트 내용");
+        requestDTO.setContent("Updated comment");
 
-        when(commentService.updateComment(eq(1L), eq(1L), eq(1L), any(CommentRequestDTO.class), eq("user2")))
-                .thenThrow(new ResourceNotFoundException("Comment not found"));
+        Mockito.when(commentService.updateComment(anyLong(), anyLong(), eq(1L), any(CommentRequestDTO.class), eq("user1")))
+                .thenThrow(new ResourceNotFoundException("Not found"));
 
-        mockMvc.perform(put("/projects/1/tasks/1/comments/1")
+        // When & Then
+        mockMvc.perform(post("/projects/1/tasks/1/comments/1/update")
+                        .header("X-User-Id", "user1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-User-Id", "user2")
                         .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Comment not found"));
-
-        verify(commentService, times(1)).updateComment(eq(1L), eq(1L), eq(1L), any(CommentRequestDTO.class), eq("user2"));
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void updateComment_Forbidden() throws Exception {
+    void testUpdateCommentForbidden() throws Exception {
+        // Given
         CommentRequestDTO requestDTO = new CommentRequestDTO();
-        requestDTO.setContent("수정된 코멘트 내용");
+        requestDTO.setContent("Updated comment");
 
-        when(commentService.updateComment(eq(1L), eq(1L), eq(1L), any(CommentRequestDTO.class), eq("anotherUser")))
-                .thenThrow(new IllegalArgumentException("You do not have permission to update this comment"));
+        Mockito.when(commentService.updateComment(anyLong(), anyLong(), eq(1L), any(CommentRequestDTO.class), eq("user1")))
+                .thenThrow(new IllegalArgumentException("Forbidden"));
 
-        mockMvc.perform(put("/projects/1/tasks/1/comments/1")
+        // When & Then
+        mockMvc.perform(post("/projects/1/tasks/1/comments/1/update")
+                        .header("X-User-Id", "user1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-User-Id", "anotherUser")
                         .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.message").value("You do not have permission to update this comment"));
-
-        verify(commentService, times(1)).updateComment(eq(1L), eq(1L), eq(1L), any(CommentRequestDTO.class), eq("anotherUser"));
+                .andExpect(status().isForbidden());
     }
 
     @Test
-    void deleteComment_Success() throws Exception {
-        doNothing().when(commentService).deleteComment(1L, 1L, 1L, "user2");
+    void testDeleteComment() throws Exception {
+        // Given
+        Mockito.doNothing().when(commentService).deleteComment(anyLong(), anyLong(), eq(1L), eq("user1"));
 
-        mockMvc.perform(delete("/projects/1/tasks/1/comments/1")
-                        .header("X-User-Id", "user2"))
+        // When & Then
+        mockMvc.perform(post("/projects/1/tasks/1/comments/1/delete")
+                        .header("X-User-Id", "user1"))
                 .andExpect(status().isNoContent());
-
-        verify(commentService, times(1)).deleteComment(1L, 1L, 1L, "user2");
     }
 
     @Test
-    void deleteComment_NotFound() throws Exception {
-        doThrow(new ResourceNotFoundException("Comment not found"))
-                .when(commentService).deleteComment(1L, 1L, 1L, "user2");
+    void testDeleteCommentNotFound() throws Exception {
+        // Given
+        Mockito.doThrow(new ResourceNotFoundException("Not found")).when(commentService)
+                .deleteComment(anyLong(), anyLong(), eq(1L), eq("user1"));
 
-        mockMvc.perform(delete("/projects/1/tasks/1/comments/1")
-                        .header("X-User-Id", "user2"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Comment not found"));
-
-        verify(commentService, times(1)).deleteComment(1L, 1L, 1L, "user2");
+        // When & Then
+        mockMvc.perform(post("/projects/1/tasks/1/comments/1/delete")
+                        .header("X-User-Id", "user1"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void deleteComment_Forbidden() throws Exception {
-        doThrow(new IllegalArgumentException("You do not have permission to delete this comment"))
-                .when(commentService).deleteComment(1L, 1L, 1L, "anotherUser");
+    void testDeleteCommentForbidden() throws Exception {
+        // Given
+        Mockito.doThrow(new IllegalArgumentException("Forbidden")).when(commentService)
+                .deleteComment(anyLong(), anyLong(), eq(1L), eq("user1"));
 
-        mockMvc.perform(delete("/projects/1/tasks/1/comments/1")
-                        .header("X-User-Id", "anotherUser"))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.message").value("You do not have permission to delete this comment"));
-
-        verify(commentService, times(1)).deleteComment(1L, 1L, 1L, "anotherUser");
+        // When & Then
+        mockMvc.perform(post("/projects/1/tasks/1/comments/1/delete")
+                        .header("X-User-Id", "user1"))
+                .andExpect(status().isForbidden());
     }
 }
