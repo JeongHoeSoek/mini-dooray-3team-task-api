@@ -233,7 +233,7 @@ public class TaskService {
             throw new ResourceNotFoundException("No tasks found for the given project");
         }
 
-        return tasks.stream().map(this::toResponse).collect(Collectors.toList());
+        return tasks.stream().map(this::toResponse).toList();
     }
 
 }
