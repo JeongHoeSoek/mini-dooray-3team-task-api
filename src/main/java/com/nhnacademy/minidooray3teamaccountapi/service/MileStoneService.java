@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class MileStoneService {
-    private final String RESOURCE_NOT_FOUND = "프로젝트를 찾을 수 없습니다.";
+    private static final String PROJECT_NOT_FOUND_MESSAGE = "프로젝트를 찾을 수 없습니다.";
 
     private final MilestoneRepository milestoneRepository;
 
@@ -57,7 +57,7 @@ public class MileStoneService {
         Project project = projectRepository.findById(projectId).orElse(null);
 
         if (project == null) {
-            throw new ResourceNotFoundException("프로젝트를 찾을 수 없습니다.");
+            throw new ResourceNotFoundException(PROJECT_NOT_FOUND_MESSAGE);
         }
 
         // DTO -> Entity로 변환
@@ -81,7 +81,7 @@ public class MileStoneService {
         Project project = projectRepository.findById(projectId).orElse(null);
 
         if (project == null) {
-            throw new ResourceNotFoundException("프로젝트를 찾을 수 없습니다.");
+            throw new ResourceNotFoundException(PROJECT_NOT_FOUND_MESSAGE);
         }
 
         // DTO -> Entity로 변환
@@ -106,7 +106,7 @@ public class MileStoneService {
         Project project = projectRepository.findById(projectId).orElse(null);
 
         if (project == null) {
-            throw new ResourceNotFoundException("프로젝트를 찾을 수 없습니다.");
+            throw new ResourceNotFoundException(PROJECT_NOT_FOUND_MESSAGE);
         }
 
         // MileStone 조회
