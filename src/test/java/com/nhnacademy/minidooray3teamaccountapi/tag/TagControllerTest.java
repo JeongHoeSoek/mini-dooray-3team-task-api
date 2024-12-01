@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(SpringExtension.class)
-public class TagControllerTest {
+class TagControllerTest {
 
     private MockMvc mockMvc;
 

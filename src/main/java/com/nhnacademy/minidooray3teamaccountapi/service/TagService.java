@@ -4,13 +4,16 @@ import com.nhnacademy.minidooray3teamaccountapi.dto.TagRequestDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.TagResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.entity.Tag;
 import com.nhnacademy.minidooray3teamaccountapi.repository.TagRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TagService {
-    @Autowired
-    private TagRepository tagRepository;
+
+    private final TagRepository tagRepository;
+
+    public TagService(TagRepository tagRepository) {
+        this.tagRepository = tagRepository;
+    }
 
     // DTO -> Entity 변환
     public Tag toEntity(TagRequestDTO requestDTO) {
