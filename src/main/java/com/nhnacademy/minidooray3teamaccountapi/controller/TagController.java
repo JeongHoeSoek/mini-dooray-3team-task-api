@@ -5,6 +5,7 @@ import com.nhnacademy.minidooray3teamaccountapi.dto.TagResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,7 @@ public class TagController {
     private TagService tagService;
 
     // Tag 생성
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TagResponseDTO> cratedTag(@PathVariable Long projectId,
                                                     @RequestBody TagRequestDTO tagRequestDTO) {
 
