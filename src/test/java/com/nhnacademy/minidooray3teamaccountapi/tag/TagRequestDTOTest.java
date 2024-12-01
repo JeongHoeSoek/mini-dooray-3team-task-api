@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.nhnacademy.minidooray3teamaccountapi.dto.TagRequestDTO;
 import org.junit.jupiter.api.Test;
 
-public class TagRequestDTOTest {
+class TagRequestDTOTest {
 
     @Test
     public void testTagRequestDTOGettersAndSetters() {

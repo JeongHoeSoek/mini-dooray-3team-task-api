@@ -27,7 +27,7 @@ public class MileStoneService {
 
         // DTO를 Entity로 변환하는 작업
         mileStone.setName(requestDTO.getName());
-        mileStone.setStatus((requestDTO.getStatus()));
+        mileStone.setStatus(MileStone.Status.valueOf(requestDTO.getStatus()));
         mileStone.setCreatedAt(LocalDateTime.now());
 
         // Entity 반환

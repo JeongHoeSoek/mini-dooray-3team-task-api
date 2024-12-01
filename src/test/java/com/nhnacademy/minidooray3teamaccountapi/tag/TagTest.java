@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.nhnacademy.minidooray3teamaccountapi.entity.Tag;
 import org.junit.jupiter.api.Test;
 
-public class TagTest {
+class TagTest {
 
     @Test
     public void testTagGettersAndSetters() {

@@ -1,7 +1,12 @@
 package com.nhnacademy.minidooray3teamaccountapi.milestone;
 
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -10,257 +15,205 @@ import static org.mockito.Mockito.when;
 import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneRequestDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.entity.MileStone;
+import com.nhnacademy.minidooray3teamaccountapi.entity.Project;
+import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundException;
 import com.nhnacademy.minidooray3teamaccountapi.repository.MilestoneRepository;
+import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectRepository;
 import com.nhnacademy.minidooray3teamaccountapi.service.MileStoneService;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@Slf4j
-@SpringBootTest
-public class MileStoneServiceTest {
-    @InjectMocks
-    private MileStoneService mileStoneService;
+@ExtendWith(MockitoExtension.class)
+class MileStoneServiceTest {
 
     @Mock
     private MilestoneRepository milestoneRepository;
 
+    @Mock
+    private ProjectRepository projectRepository;
+
+    @InjectMocks
+    private MileStoneService mileStoneService;
+
+    private Long projectId;
+    private Long milestoneId;
+    private MileStoneRequestDTO mileStoneRequestDTO;
+    private MileStone mileStone;
+    private Project project;
+
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void testToEntity() {
-        // Given
-        MileStoneRequestDTO requestDTO = new MileStoneRequestDTO("Milestone 1", "START");
-
-        // When
-        MileStone mileStone = mileStoneService.toEntity(requestDTO);
-
-        // Then
-        Assertions.assertNotNull(mileStone);
-        Assertions.assertEquals("Milestone 1", mileStone.getName());
-        Assertions.assertEquals(MileStone.Status.START, mileStone.getStatus());
-        Assertions.assertNotNull(mileStone.getCreatedAt());
-    }
-
-    @Test
-    void testToResponseDTO() {
-        // Given
-        MileStone mileStone = new MileStone();
-        mileStone.setMilestoneId(1L);
-        mileStone.setName("Milestone 1");
+    public void setUp() {
+        projectId = 1L;
+        milestoneId = 1L;
+        mileStoneRequestDTO = new MileStoneRequestDTO("Test Milestone", MileStone.Status.START);
+        mileStone = new MileStone();
+        mileStone.setMilestoneId(milestoneId);
+        mileStone.setName("Test Milestone");
         mileStone.setStatus(MileStone.Status.START);
 
-        // When
-        MileStoneResponseDTO responseDTO = mileStoneService.toResponseDTO(mileStone);
-
-        // Then
-        Assertions.assertNotNull(responseDTO);
-        Assertions.assertEquals(1L, responseDTO.getId());
-        Assertions.assertEquals("Milestone 1", responseDTO.getName());
-        Assertions.assertEquals("START", responseDTO.getStatus());
+        project = new Project();
+        project.setProjectId(projectId);
+        project.setName("Test Project");
+        project.setStatus(Project.Status.ACTIVE);
     }
 
     @Test
-    void testCreateMileStone() {
-        // Given
-        Long projectId = 1L;
-        MileStoneRequestDTO requestDTO = new MileStoneRequestDTO("Milestone 1", "START");
-        MileStone savedMileStone = new MileStone();
-        savedMileStone.setMilestoneId(1L);
-        savedMileStone.setName("Milestone 1");
-        savedMileStone.setStatus(MileStone.Status.START);
+    void testCreateMileStone_Success() {
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
+        when(milestoneRepository.save(any(MileStone.class))).thenReturn(mileStone);
 
-        when(milestoneRepository.save(any(MileStone.class))).thenReturn(savedMileStone);
+        MileStoneResponseDTO responseDTO = mileStoneService.createMileStone(projectId, mileStoneRequestDTO);
 
-        // When
-        MileStoneResponseDTO responseDTO = mileStoneService.createMileStone(projectId, requestDTO);
+        assertNotNull(responseDTO);
+        assertEquals(milestoneId, responseDTO.getId());
+        assertEquals("Test Milestone", responseDTO.getName());
+        assertEquals("START", responseDTO.getStatus());
 
-        // Then
-        Assertions.assertNotNull(responseDTO);
-        Assertions.assertEquals(1L, responseDTO.getId());
-        Assertions.assertEquals("Milestone 1", responseDTO.getName());
-        Assertions.assertEquals("START", responseDTO.getStatus());
-
+        verify(projectRepository, times(1)).findById(projectId);
         verify(milestoneRepository, times(1)).save(any(MileStone.class));
     }
 
     @Test
-    void testCreateMileStone_NullEntity() {
-        // Given
-        Long projectId = 1L;
-        MileStoneRequestDTO requestDTO = new MileStoneRequestDTO(null, null);
+    void testCreateMileStone_ProjectNotFound() {
+        when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
 
-        // When & Then
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            mileStoneService.createMileStone(projectId, requestDTO);
+        assertThrows(ResourceNotFoundException.class, () -> {
+            mileStoneService.createMileStone(projectId, mileStoneRequestDTO);
         });
+
+        verify(projectRepository, times(1)).findById(projectId);
+        verify(milestoneRepository, never()).save(any(MileStone.class));
     }
 
-
     @Test
-    void testUpdateMileStone() {
-        // Given
-        Long projectId = 1L;
-        Long milestoneId = 1L;
-        MileStoneRequestDTO requestDTO = new MileStoneRequestDTO("Updated Milestone", "PROGRESS");
+    void testUpdateMileStone_Success() {
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
+        when(milestoneRepository.findById(milestoneId)).thenReturn(Optional.of(mileStone));
+        when(milestoneRepository.save(any(MileStone.class))).thenReturn(mileStone);
 
-        MileStone existingMileStone = new MileStone();
-        existingMileStone.setMilestoneId(milestoneId);
-        existingMileStone.setName("Milestone 1");
-        existingMileStone.setStatus(MileStone.Status.START);
+        MileStoneResponseDTO responseDTO =
+                mileStoneService.updateMileStone(projectId, milestoneId, mileStoneRequestDTO);
 
-        when(milestoneRepository.findById(milestoneId)).thenReturn(Optional.of(existingMileStone));
-        when(milestoneRepository.save(any(MileStone.class))).thenReturn(existingMileStone);
+        assertNotNull(responseDTO);
+        assertEquals(milestoneId, responseDTO.getId());
+        assertEquals("Test Milestone", responseDTO.getName());
+        assertEquals("START", responseDTO.getStatus());
 
-        // When
-        MileStoneResponseDTO responseDTO = mileStoneService.updateMileStone(projectId, milestoneId, requestDTO);
-
-        // Then
-        Assertions.assertNotNull(responseDTO);
-        Assertions.assertEquals(milestoneId, responseDTO.getId());
-        Assertions.assertEquals("Updated Milestone", responseDTO.getName());
-        Assertions.assertEquals("PROGRESS", responseDTO.getStatus());
-
+        verify(projectRepository, times(1)).findById(projectId);
         verify(milestoneRepository, times(1)).findById(milestoneId);
         verify(milestoneRepository, times(1)).save(any(MileStone.class));
     }
 
     @Test
-    void testUpdateMileStone_NotFound() {
-        // Given
-        Long projectId = 1L;
-        Long milestoneId = 1L;
-        MileStoneRequestDTO requestDTO = new MileStoneRequestDTO("Updated Milestone", "PROGRESS");
+    void testUpdateMileStone_ProjectNotFound() {
+        when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
 
+        assertThrows(ResourceNotFoundException.class, () -> {
+            mileStoneService.updateMileStone(projectId, milestoneId, mileStoneRequestDTO);
+        });
+
+        verify(projectRepository, times(1)).findById(projectId);
+        verify(milestoneRepository, never()).findById(anyLong());
+        verify(milestoneRepository, never()).save(any(MileStone.class));
+    }
+
+    @Test
+    void testUpdateMileStone_MileStoneNotFound() {
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
         when(milestoneRepository.findById(milestoneId)).thenReturn(Optional.empty());
 
-        // When
-        MileStoneResponseDTO responseDTO = mileStoneService.updateMileStone(projectId, milestoneId, requestDTO);
+        MileStoneResponseDTO responseDTO =
+                mileStoneService.updateMileStone(projectId, milestoneId, mileStoneRequestDTO);
 
-        // Then
-        Assertions.assertNull(responseDTO);
+        assertNull(responseDTO);
 
+        verify(projectRepository, times(1)).findById(projectId);
         verify(milestoneRepository, times(1)).findById(milestoneId);
         verify(milestoneRepository, never()).save(any(MileStone.class));
     }
 
     @Test
-    void testDeleteMileStone() {
-        // Given
-        Long projectId = 1L;
-        Long milestoneId = 1L;
+    void testDeleteMileStone_Success() {
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
+        when(milestoneRepository.findById(milestoneId)).thenReturn(Optional.of(mileStone));
 
-        MileStone existingMileStone = new MileStone();
-        existingMileStone.setMilestoneId(milestoneId);
-        existingMileStone.setName("Milestone 1");
-        existingMileStone.setStatus(MileStone.Status.START);
-
-        when(milestoneRepository.findById(milestoneId)).thenReturn(Optional.of(existingMileStone));
-
-        // When
         MileStoneResponseDTO responseDTO = mileStoneService.deleteMileStone(projectId, milestoneId);
 
-        // Then
-        Assertions.assertNotNull(responseDTO);
-        Assertions.assertEquals(milestoneId, responseDTO.getId());
+        assertNotNull(responseDTO);
+        assertEquals(milestoneId, responseDTO.getId());
+        assertEquals("Test Milestone", responseDTO.getName());
 
+        verify(projectRepository, times(1)).findById(projectId);
         verify(milestoneRepository, times(1)).findById(milestoneId);
-        verify(milestoneRepository, times(1)).delete(existingMileStone);
+        verify(milestoneRepository, times(1)).delete(mileStone);
     }
 
     @Test
-    void testDeleteMileStone_NotFound() {
-        // Given
-        Long projectId = 1L;
-        Long milestoneId = 1L;
+    void testDeleteMileStone_ProjectNotFound() {
+        when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
 
+        assertThrows(ResourceNotFoundException.class, () -> {
+            mileStoneService.deleteMileStone(projectId, milestoneId);
+        });
+
+        verify(projectRepository, times(1)).findById(projectId);
+        verify(milestoneRepository, never()).findById(anyLong());
+        verify(milestoneRepository, never()).delete(any(MileStone.class));
+    }
+
+    @Test
+    void testDeleteMileStone_MileStoneNotFound() {
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
         when(milestoneRepository.findById(milestoneId)).thenReturn(Optional.empty());
 
-        // When
         MileStoneResponseDTO responseDTO = mileStoneService.deleteMileStone(projectId, milestoneId);
 
-        // Then
-        Assertions.assertNull(responseDTO);
+        assertNull(responseDTO);
 
+        verify(projectRepository, times(1)).findById(projectId);
         verify(milestoneRepository, times(1)).findById(milestoneId);
         verify(milestoneRepository, never()).delete(any(MileStone.class));
     }
 
     @Test
     void testShow() {
-        // Given
-        MileStone mileStone1 = new MileStone();
-        mileStone1.setMilestoneId(1L);
-        mileStone1.setName("Milestone 1");
-        mileStone1.setStatus(MileStone.Status.START);
+        List<MileStone> mileStones = new ArrayList<>();
+        mileStones.add(mileStone);
 
-        MileStone mileStone2 = new MileStone();
-        mileStone2.setMilestoneId(2L);
-        mileStone2.setName("Milestone 2");
-        mileStone2.setStatus(MileStone.Status.PROGRESS);
+        when(milestoneRepository.findAll()).thenReturn(mileStones);
 
-        when(milestoneRepository.findAll()).thenReturn(Arrays.asList(mileStone1, mileStone2));
+        Iterable<MileStoneResponseDTO> responseDTOs = mileStoneService.show();
 
-        // When
-        Iterable<MileStoneResponseDTO> result = mileStoneService.show();
+        assertNotNull(responseDTOs);
+        List<MileStoneResponseDTO> dtoList = new ArrayList<>();
+        responseDTOs.forEach(dtoList::add);
 
-        // Then
-        Assertions.assertNotNull(result);
-        int count = 0;
-        for (MileStoneResponseDTO dto : result) {
-            Assertions.assertNotNull(dto);
-            count++;
-        }
-        Assertions.assertEquals(2, count);
+        assertEquals(1, dtoList.size());
+        assertEquals(milestoneId, dtoList.get(0).getId());
+        assertEquals("Test Milestone", dtoList.get(0).getName());
+        assertEquals("START", dtoList.get(0).getStatus());
 
         verify(milestoneRepository, times(1)).findAll();
     }
 
     @Test
     void testIndex() {
-        // Given
-        Long milestoneId = 1L;
-        MileStone mileStone = new MileStone();
-        mileStone.setMilestoneId(milestoneId);
-        mileStone.setName("Milestone 1");
-        mileStone.setStatus(MileStone.Status.START);
-
         when(milestoneRepository.findById(milestoneId)).thenReturn(Optional.of(mileStone));
 
-        // When
         MileStoneResponseDTO responseDTO = mileStoneService.index(milestoneId);
 
-        // Then
-        Assertions.assertNotNull(responseDTO);
-        Assertions.assertEquals(milestoneId, responseDTO.getId());
+        assertNotNull(responseDTO);
+        assertEquals(milestoneId, responseDTO.getId());
+        assertEquals("Test Milestone", responseDTO.getName());
+        assertEquals("START", responseDTO.getStatus());
 
         verify(milestoneRepository, times(1)).findById(milestoneId);
     }
-
-    @Test
-    void testIndex_NotFound() {
-        // Given
-        Long milestoneId = 1L;
-
-        when(milestoneRepository.findById(milestoneId)).thenReturn(Optional.empty());
-
-        // When & Then
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            mileStoneService.index(milestoneId);
-        });
-
-        verify(milestoneRepository, times(1)).findById(milestoneId);
-    }
-
-
 }

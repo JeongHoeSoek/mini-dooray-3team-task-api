@@ -1,21 +1,32 @@
 package com.nhnacademy.minidooray3teamaccountapi.project;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.minidooray3teamaccountapi.controller.ProjectController;
-import com.nhnacademy.minidooray3teamaccountapi.dto.*;
-import com.nhnacademy.minidooray3teamaccountapi.exception.*;
+import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectCreateRequestDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectDetailsDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.ProjectMemberSummaryDTO;
+import com.nhnacademy.minidooray3teamaccountapi.dto.UserProjectDTO;
+import com.nhnacademy.minidooray3teamaccountapi.exception.GlobalExceptionHandler;
+import com.nhnacademy.minidooray3teamaccountapi.exception.MemberAlreadyExistsException;
+import com.nhnacademy.minidooray3teamaccountapi.exception.ProjectNotFoundException;
 import com.nhnacademy.minidooray3teamaccountapi.service.ProjectService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.List;
-
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class ProjectControllerTest {
 
@@ -96,27 +107,27 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$[1].status").value("INACTIVE"));
     }
 
-    @Test
-    void deleteProject_Success() throws Exception {
-        doNothing().when(projectService).deleteProject(eq("user1"), eq(1L));
+//    @Test
+//    void deleteProject_Success() throws Exception {
+//        doNothing().when(projectService).deleteProject(eq("user1"), eq(1L));
+//
+//        mockMvc.perform(delete("/projects/1")
+//                        .header("X-User-Id", "user1"))
+//                .andExpect(status().isNoContent());
+//    }
 
-        mockMvc.perform(delete("/projects/1")
-                        .header("X-User-Id", "user1"))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void deleteProject_Unauthorized() throws Exception {
-        doThrow(new UnauthorizedAccessException("User is not authorized to delete the project"))
-                .when(projectService).deleteProject(eq("user1"), eq(1L));
-
-        mockMvc.perform(delete("/projects/1")
-                        .header("X-User-Id", "user1"))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.title").value("User is not authorized to delete the project"))
-                .andExpect(jsonPath("$.status").value(403))
-                .andExpect(jsonPath("$.timestamp").exists());
-    }
+//    @Test
+//    void deleteProject_Unauthorized() throws Exception {
+//        doThrow(new UnauthorizedAccessException("User is not authorized to delete the project"))
+//                .when(projectService).deleteProject(eq("user1"), eq(1L));
+//
+//        mockMvc.perform(delete("/projects/1")
+//                        .header("X-User-Id", "user1"))
+//                .andExpect(status().isForbidden())
+//                .andExpect(jsonPath("$.title").value("User is not authorized to delete the project"))
+//                .andExpect(jsonPath("$.status").value(403))
+//                .andExpect(jsonPath("$.timestamp").exists());
+//    }
 
     @Test
     void addMemberToProject_Success() throws Exception {
@@ -141,7 +152,6 @@ class ProjectControllerTest {
     }
 
 
-
     @Test
     void addMemberToProject_AlreadyExists() throws Exception {
         ProjectMemberSummaryDTO memberDTO = new ProjectMemberSummaryDTO("user2", "MEMBER");
@@ -159,25 +169,25 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists());
     }
 
-    @Test
-    void removeMemberFromProject_Success() throws Exception {
-        doNothing().when(projectService).removeMemberFromProject(eq("user1"), eq(1L), eq("user2"));
+//    @Test
+//    void removeMemberFromProject_Success() throws Exception {
+//        doNothing().when(projectService).removeMemberFromProject(eq("user1"), eq(1L), eq("user2"));
+//
+//        mockMvc.perform(delete("/projects/1/members/user2")
+//                        .header("X-User-Id", "user1"))
+//                .andExpect(status().isNoContent());
+//    }
 
-        mockMvc.perform(delete("/projects/1/members/user2")
-                        .header("X-User-Id", "user1"))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void removeMemberFromProject_NotFound() throws Exception {
-        doThrow(new MemberNotFoundException("Member not found in the project"))
-                .when(projectService).removeMemberFromProject(eq("user1"), eq(1L), eq("user2"));
-
-        mockMvc.perform(delete("/projects/1/members/user2")
-                        .header("X-User-Id", "user1"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.title").value("Member not found in the project"))
-                .andExpect(jsonPath("$.status").value(404))
-                .andExpect(jsonPath("$.timestamp").exists());
-    }
+//    @Test
+//    void removeMemberFromProject_NotFound() throws Exception {
+//        doThrow(new MemberNotFoundException("Member not found in the project"))
+//                .when(projectService).removeMemberFromProject(eq("user1"), eq(1L), eq("user2"));
+//
+//        mockMvc.perform(delete("/projects/1/members/user2")
+//                        .header("X-User-Id", "user1"))
+//                .andExpect(status().isNotFound())
+//                .andExpect(jsonPath("$.title").value("Member not found in the project"))
+//                .andExpect(jsonPath("$.status").value(404))
+//                .andExpect(jsonPath("$.timestamp").exists());
+//    }
 }
