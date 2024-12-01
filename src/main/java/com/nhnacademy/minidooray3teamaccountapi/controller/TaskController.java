@@ -7,6 +7,7 @@ import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundExcept
 import com.nhnacademy.minidooray3teamaccountapi.service.TaskService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class TaskController {
     }
 
     // Task 생성
-    @PostMapping("/tasks")
+    @PostMapping(value = "/tasks",  consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskResponse> createTask(
             @PathVariable Long projectId,
             @RequestBody TaskRequest taskRequest) {
@@ -101,6 +102,15 @@ public class TaskController {
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/tasks")
+    public ResponseEntity<List<TaskResponse>> getAllTasks(
+            @PathVariable Long projectId
+    ) {
+        List<TaskResponse> tasksByProjectId = taskService.getTasksByProjectId(projectId);
+
+        return new ResponseEntity<>(tasksByProjectId, HttpStatus.OK);
     }
 }
 

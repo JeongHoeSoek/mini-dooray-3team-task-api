@@ -3,29 +3,23 @@ package com.nhnacademy.minidooray3teamaccountapi.service;
 import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneRequestDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.entity.MileStone;
-import com.nhnacademy.minidooray3teamaccountapi.entity.Project;
-import com.nhnacademy.minidooray3teamaccountapi.exception.ResourceNotFoundException;
 import com.nhnacademy.minidooray3teamaccountapi.repository.MilestoneRepository;
 import com.nhnacademy.minidooray3teamaccountapi.repository.ProjectRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class MileStoneService {
-    private static final String PROJECT_NOT_FOUND_MESSAGE = "프로젝트를 찾을 수 없습니다.";
+    @Autowired
+    private MilestoneRepository milestoneRepository;
 
-    private final MilestoneRepository milestoneRepository;
-
-    private final ProjectRepository projectRepository;
-
-    public MileStoneService(MilestoneRepository milestoneRepository, ProjectRepository projectRepository) {
-        this.milestoneRepository = milestoneRepository;
-        this.projectRepository = projectRepository;
-    }
+    @Autowired
+    private ProjectRepository projectRepository;
 
     // DTO -> Entity 변환
     public MileStone toEntity(MileStoneRequestDTO requestDTO) {
@@ -33,7 +27,7 @@ public class MileStoneService {
 
         // DTO를 Entity로 변환하는 작업
         mileStone.setName(requestDTO.getName());
-        mileStone.setStatus(requestDTO.getStatus());
+        mileStone.setStatus(MileStone.Status.valueOf(requestDTO.getStatus()));
         mileStone.setCreatedAt(LocalDateTime.now());
 
         // Entity 반환
@@ -53,12 +47,8 @@ public class MileStoneService {
 
     // MileStone 생성
     public MileStoneResponseDTO createMileStone(Long projectId, MileStoneRequestDTO requestDTO) {
-//         프로젝트 조회 (필요 시)
-        Project project = projectRepository.findById(projectId).orElse(null);
-
-        if (project == null) {
-            throw new ResourceNotFoundException(PROJECT_NOT_FOUND_MESSAGE);
-        }
+        // 프로젝트 조회 (필요 시)
+        // Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("프로젝트를 찾을 수 없습니다."));
 
         // DTO -> Entity로 변환
         MileStone entity = toEntity(requestDTO);
@@ -76,12 +66,9 @@ public class MileStoneService {
 
     // MileStone 업데이트
     public MileStoneResponseDTO updateMileStone(Long projectId, Long milestoneId, MileStoneRequestDTO requestDTO) {
-//         프로젝트 조회 (필요 시)
-        Project project = projectRepository.findById(projectId).orElse(null);
-
-        if (project == null) {
-            throw new ResourceNotFoundException(PROJECT_NOT_FOUND_MESSAGE);
-        }
+        // 프로젝트 조회 (필요 시)
+        // Project project = projectRepository.findById(projectId)
+        //         .orElseThrow(() -> new ResourceNotFoundException("프로젝트를 찾을 수 없습니다."));
 
         // DTO -> Entity로 변환
         MileStone entity = toEntity(requestDTO);
@@ -102,11 +89,8 @@ public class MileStoneService {
 
     public MileStoneResponseDTO deleteMileStone(Long projectId, Long milestoneId) {
         // 프로젝트 조회 (필요 시)
-        Project project = projectRepository.findById(projectId).orElse(null);
-
-        if (project == null) {
-            throw new ResourceNotFoundException(PROJECT_NOT_FOUND_MESSAGE);
-        }
+        // Project project = projectRepository.findById(projectId)
+        //         .orElseThrow(() -> new ResourceNotFoundException("프로젝트를 찾을 수 없습니다."));
 
         // MileStone 조회
         MileStone target = milestoneRepository.findById(milestoneId).orElse(null);

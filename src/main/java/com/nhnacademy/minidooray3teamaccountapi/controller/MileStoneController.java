@@ -4,6 +4,7 @@ import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneRequestDTO;
 import com.nhnacademy.minidooray3teamaccountapi.dto.MileStoneResponseDTO;
 import com.nhnacademy.minidooray3teamaccountapi.service.MileStoneService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,7 @@ public class MileStoneController {
     }
 
     // 마일스톤 생성
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MileStoneResponseDTO> createMileStone(@PathVariable Long projectId,
                                                                 @RequestBody MileStoneRequestDTO mileStoneRequestDTO) {
 
@@ -50,7 +51,7 @@ public class MileStoneController {
     }
 
     // 마일스톤 수정 (`PATCH` → `POST`)
-    @PostMapping("/{milestoneId}/update")
+    @PostMapping(value = "/{milestoneId}/update" , consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MileStoneResponseDTO> updateMileStone(@PathVariable Long projectId,
                                                                 @PathVariable Long milestoneId,
                                                                 @RequestBody MileStoneRequestDTO requestDTO) {

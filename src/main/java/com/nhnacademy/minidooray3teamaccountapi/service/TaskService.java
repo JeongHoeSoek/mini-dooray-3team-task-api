@@ -225,4 +225,15 @@ public class TaskService {
 
         return response;
     }
+
+    public List<TaskResponse> getTasksByProjectId(Long projectId) {
+        List<Task> tasks = taskRepository.findByProject_ProjectId(projectId);
+
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for the given project");
+        }
+
+        return tasks.stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
 }
